@@ -70,7 +70,11 @@ class PullSubcmd(CxdbSubcmd):
         self.set_cxdb_arg(True)
 
     def run(self):
-        self.parse()
+        try:
+            self.parse()
+        except Exception as e:
+            print(e)
+            return 1
         return subprocess.run([self.engine, self.cxpull, '--cxdb', self.args.cxdb]).returncode
 
 class PlotSubcmd(CxdbSubcmd):
@@ -91,7 +95,7 @@ class PlotSubcmd(CxdbSubcmd):
             readable_path(os.path.join(self.args.cxdb, '{}'.format(self.args.fund)))
         except Exception as e:
             print(e)
-            exit(1)
+            return 1
         plot.show_feed(self.args.cxdb, self.args.fund)
         return 0
 
