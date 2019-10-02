@@ -28,6 +28,17 @@ class Cxdb(object):
 def numeric(data_array):
     return [numpy.nan if i == '-' else locale.atof(i) for i in data_array]
 
+def subplot(index, fund, metric, data):
+    if index > 3:
+        raise Exception('Invalid subplot index')
+    matplotlib.pyplot.subplot(3, 1, index)
+    if index == 1:
+        matplotlib.pyplot.title(fund)
+    matplotlib.pyplot.plot(data)
+    matplotlib.pyplot.ylabel(metric)
+    matplotlib.pyplot.xlabel('Data')
+    matplotlib.pyplot.grid(True)
+
 def show_feed(cxdb_path, fund):
     cxdb = Cxdb(cxdb_path, fund)
     header = ['Data',
@@ -40,11 +51,8 @@ def show_feed(cxdb_path, fund):
               'Acumulado 12M (%)',
               'PL (milhões R$)',
               'PL Médio (milhões R$)']
-    col = header[7]
-    matplotlib.pyplot.plot(numeric(cxdb.data[col]))
-    matplotlib.pyplot.title(fund)
-    matplotlib.pyplot.ylabel(col)
-    matplotlib.pyplot.xlabel('Data')
-    matplotlib.pyplot.grid(True)
+    subplot(1, fund, header[4], numeric(cxdb.data[header[4]]))
+    subplot(2, fund, header[5], numeric(cxdb.data[header[5]]))
+    subplot(3, fund, header[6], numeric(cxdb.data[header[6]]))
     matplotlib.pyplot.show()
 

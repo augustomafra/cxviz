@@ -86,7 +86,8 @@ class PlotSubcmd(CxdbSubcmd):
         self.parser.add_argument('--fund',
                                  action='store',
                                  required=True,
-                                 help='Investiment fund to be plotted')
+                                 help='Investiment fund to be plotted. Must be\
+                                 an existing csv file name inside cxdb.')
         plot.set_locale()
 
     def run(self):
