@@ -6,7 +6,7 @@ var util = require(phantom.libraryPath + '/util.js');
 module.exports = {
     parseSystemArgs : function() {
         var args = system.args;
-        if (args.length !== 3) {
+        if (args.length !== 3 && args.length !== 4) {
             util.checkError('fail', 'Error: Incorrect number of arguments.\nUsage: cxpull --cxdb path/to/cxdb');
         }
         var cxdbSwitch = args.indexOf('--cxdb');
@@ -21,7 +21,8 @@ module.exports = {
         if (!fs.isDirectory(cxdb)) {
             util.checkError('fail', 'Error: Unable to find cxdb path: ' + cxdb);
         }
-        return {cxdb : cxdb};
+        var debug = args.indexOf('--debug') !== -1;
+        return {cxdb : cxdb, debug : debug};
     }
 }
 

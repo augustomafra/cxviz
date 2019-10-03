@@ -4,6 +4,9 @@ var cxdbhandler = require(phantom.libraryPath + '/cxdbhandler.js');
 var util = require(phantom.libraryPath + '/util.js');
 
 var debug = false;
+var setDebug = function(isdebug) {
+    debug = isdebug;
+}
 
 page.onConsoleMessage = function(message) {
     if (debug) console.log('  > ' + message);
@@ -166,6 +169,7 @@ var pullCxdb = function(url, cxdb) {
 }
 
 module.exports = {
-    pullCxdb : pullCxdb
+    pullCxdb : pullCxdb,
+    setDebug : setDebug
 }
 

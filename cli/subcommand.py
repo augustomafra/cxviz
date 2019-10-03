@@ -68,6 +68,9 @@ class PullSubcmd(CxdbSubcmd):
 
     def setup(self):
         self.set_cxdb_arg(True)
+        self.parser.add_argument('--debug',
+                                 action='store_true',
+                                 help='Enable verbose log')
 
     def run(self):
         try:
@@ -75,7 +78,10 @@ class PullSubcmd(CxdbSubcmd):
         except Exception as e:
             print(e)
             return 1
-        return subprocess.run([self.engine, self.cxpull, '--cxdb', self.args.cxdb]).returncode
+        cmd = [self.engine, self.cxpull, '--cxdb', self.args.cxdb]
+        if self.args.debug:
+            cmd.append('--debug')
+        return subprocess.run(cmd).returncode
 
 class PlotSubcmd(CxdbSubcmd):
     name = 'plot'

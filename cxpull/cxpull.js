@@ -25,5 +25,6 @@ try {
     phantom.exit(1);
 }
 var cxdb = args.cxdb;
+pagehandler.setDebug(args.debug);
 pagehandler.pullCxdb(url, cxdb);
 
