@@ -1,3 +1,4 @@
+import configparser
 import csv
 from datetime import datetime
 import locale
@@ -7,6 +8,18 @@ import os
 
 def set_locale():
     locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
+
+cxviz_config = {'funds' : [], 'metrics' : []}
+def read_config(config_file):
+    config = configparser.ConfigParser(allow_no_value=True)
+    config.optionxform = str # Make the parser case sensitive
+    config.read(config_file)
+    if 'funds' in config:
+        for fund in config['funds']:
+            cxviz_config['funds'].append(fund)
+    if 'metrics' in config:
+        for metric in config['metrics']:
+            cxviz_config['metrics'].append(metric)
 
 class Cxdb(object):
     def __init__(self, cxdb_path, fund):
@@ -74,8 +87,9 @@ def show_feed(cxdb_path, fund):
               'Acumulado 12M (%)',
               'PL (milhões R$)',
               'PL Médio (milhões R$)']
-    cxdb.subplot(1, header[4])
-    cxdb.subplot(2, header[5])
-    cxdb.subplot(3, header[6])
+    index = 1
+    for metric in cxviz_config['metrics']:
+        cxdb.subplot(index, metric)
+        index += 1
     matplotlib.pyplot.show()
 

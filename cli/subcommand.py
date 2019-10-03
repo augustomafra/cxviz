@@ -16,6 +16,9 @@ class UnknownSubcmd(SubcmdException):
 class UnimplementedSubcmd(SubcmdException):
     pass
 
+class SubcmdConfigError(SubcmdException):
+    pass
+
 class Subcommand(object):
     def __init__(self):
         self.parser = argparse.ArgumentParser(description=self.description)
@@ -86,6 +89,7 @@ class PullSubcmd(CxdbSubcmd):
 class PlotSubcmd(CxdbSubcmd):
     name = 'plot'
     description = 'Plot data about investiment funds'
+    config = os.path.join(sys.path[0], '..', '.cxviz');
 
     def setup(self):
         self.set_cxdb_arg(False)
@@ -95,6 +99,12 @@ class PlotSubcmd(CxdbSubcmd):
                                  help='Investiment fund to be plotted. Must be\
                                  an existing csv file name inside cxdb.')
         plot.set_locale()
+        try:
+            plot.read_config(readable_path(self.config))
+        except Exception as e:
+            print('Error when loading config file: {}'.format(self.config))
+            print(e)
+            raise SubcmdConfigError(self.name)
 
     def run(self):
         try:
