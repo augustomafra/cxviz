@@ -3,8 +3,7 @@ import os
 import subprocess
 import sys
 
-sys.path.append(os.path.join(sys.path[0], '..', 'plot'))
-import plot
+import cxfeed
 
 class SubcmdException(BaseException):
     def __init__(self, cmd):
@@ -93,9 +92,9 @@ class FeedSubcmd(CxdbSubcmd):
 
     def setup(self):
         self.set_cxdb_arg(False)
-        plot.set_locale()
+        cxfeed.set_locale()
         try:
-            plot.read_config(readable_path(self.config))
+            cxfeed.read_config(readable_path(self.config))
         except Exception as e:
             print('Error when loading config file: {}'.format(self.config))
             print(e)
@@ -107,6 +106,6 @@ class FeedSubcmd(CxdbSubcmd):
         except Exception as e:
             print(e)
             return 1
-        plot.show_feed(self.args.cxdb)
+        cxfeed.show_feed(self.args.cxdb)
         return 0
 
