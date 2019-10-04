@@ -86,9 +86,9 @@ class PullSubcmd(CxdbSubcmd):
             cmd.append('--debug')
         return subprocess.run(cmd).returncode
 
-class PlotSubcmd(CxdbSubcmd):
-    name = 'plot'
-    description = 'Plot data about investiment funds'
+class FeedSubcmd(CxdbSubcmd):
+    name = 'feed'
+    description = 'Show feed with data about investiment funds'
     config = os.path.join(sys.path[0], '..', '.cxviz');
 
     def setup(self):

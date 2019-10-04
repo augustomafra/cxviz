@@ -40,7 +40,7 @@ Available commands
 def main():
     cxviz = Cxviz()
     try:
-        cxviz.add_subcommand(subcommand.PlotSubcmd())
+        cxviz.add_subcommand(subcommand.FeedSubcmd())
         cxviz.add_subcommand(subcommand.PullSubcmd())
     except RepeatedSubcmd as e:
         print('Invalid setup: Subcommand \'{}\' is repeated'.format(e))
