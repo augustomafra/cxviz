@@ -67,7 +67,7 @@ var updateCxdb = function(cxdb, date, tableData) {
 	tableData.forEach(function(line, index) {
         var csvLine = line.slice(1);
         csvLine.unshift(date.toString());
-		removeThousandsSeparator(csvLine);
+        removeThousandsSeparator(csvLine);
         updateCsv(getFileName(cxdb, line), csvLine);
 	});
     return cxdb;
