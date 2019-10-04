@@ -24,7 +24,7 @@ def read_config(config_file):
 class Cxdb(object):
     def __init__(self, cxdb_path, fund):
         self.fund = fund
-        with open(os.path.join(cxdb_path, '{}'.format(fund)), 'r') as csvfile:
+        with open(os.path.join(cxdb_path, '{}.csv'.format(fund)), 'r') as csvfile:
             csvreader = csv.reader(csvfile, delimiter=';', strict=True)
             self.parse_csv(csvreader)
 
@@ -75,21 +75,13 @@ def date(data_array):
 
     return [datetime.strptime(i, date_format) for i in data_array]
 
-def show_feed(cxdb_path, fund):
-    cxdb = Cxdb(cxdb_path, fund)
-    header = ['Data',
-              'Data Início',
-              'Aplic Inicial (R$)',
-              'Cota (R$)',
-              'Variação Dia (%)',
-              'Acumulado Mês (%)',
-              'Acumulado Ano (%)',
-              'Acumulado 12M (%)',
-              'PL (milhões R$)',
-              'PL Médio (milhões R$)']
-    index = 1
-    for metric in cxviz_config['metrics']:
-        cxdb.subplot(index, metric)
-        index += 1
+def show_feed(cxdb_path):
+    for fund in cxviz_config['funds']:
+        matplotlib.pyplot.figure()
+        cxdb = Cxdb(cxdb_path, fund)
+        index = 1
+        for metric in cxviz_config['metrics']:
+            cxdb.subplot(index, metric)
+            index += 1
     matplotlib.pyplot.show()
 

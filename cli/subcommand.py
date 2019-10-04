@@ -93,11 +93,6 @@ class PlotSubcmd(CxdbSubcmd):
 
     def setup(self):
         self.set_cxdb_arg(False)
-        self.parser.add_argument('--fund',
-                                 action='store',
-                                 required=True,
-                                 help='Investiment fund to be plotted. Must be\
-                                 an existing csv file name inside cxdb.')
         plot.set_locale()
         try:
             plot.read_config(readable_path(self.config))
@@ -109,10 +104,9 @@ class PlotSubcmd(CxdbSubcmd):
     def run(self):
         try:
             self.parse()
-            readable_path(os.path.join(self.args.cxdb, '{}'.format(self.args.fund)))
         except Exception as e:
             print(e)
             return 1
-        plot.show_feed(self.args.cxdb, self.args.fund)
+        plot.show_feed(self.args.cxdb)
         return 0
 
