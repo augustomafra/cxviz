@@ -41,9 +41,9 @@ class Cxdb(object):
                     i += 1
 
     def subplot(self, index, metric):
-        if index > 3:
+        if index > len(cxviz_config['metrics']):
             raise Exception('Invalid subplot index')
-        matplotlib.pyplot.subplot(3, 1, index)
+        matplotlib.pyplot.subplot(len(cxviz_config['metrics']), 1, index)
         if index == 1:
             matplotlib.pyplot.title(self.fund)
         date_header = list(self.data.keys())[0]
