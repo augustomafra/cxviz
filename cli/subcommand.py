@@ -86,6 +86,9 @@ class FeedSubcmd(CxdbSubcmd):
         except cxfeed.UnknownFund as e:
             print('Error on config file \'{}\': unknown fund: {}'.format(self.config, e))
             return 1
+        except cxfeed.UnknownMetric as e:
+            print('Error on config file \'{}\': unknown metric: {}'.format(self.config, e))
+            return 1
         except Exception as e:
             print(e)
             return 1

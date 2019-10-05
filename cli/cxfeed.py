@@ -17,6 +17,9 @@ class ConfigError(BaseException):
 class UnknownFund(BaseException):
     pass
 
+class UnknownMetric(BaseException):
+    pass
+
 class CxvizConfig(object):
     def __init__(self, config_file):
         self.data = {'funds' : [], 'metrics' : []}
@@ -73,8 +76,12 @@ class CxdbFund(object):
         if index == 1:
             matplotlib.pyplot.title(self.fund)
         date_header = list(self.data.keys())[0]
+        try:
+            plot_data = self.data[metric]
+        except KeyError as e:
+            raise UnknownMetric(metric)
         matplotlib.pyplot.plot(date(self.data[date_header]),
-                               numeric(self.data[metric]))
+                               numeric(plot_data))
         matplotlib.pyplot.ylabel(metric)
         matplotlib.pyplot.xlabel(date_header)
         matplotlib.pyplot.grid(True)
