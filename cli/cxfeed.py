@@ -73,20 +73,20 @@ def numeric(data_array):
     return [numpy.nan if i == '-' else locale.atof(i) for i in data_array]
 
 def date(data_array):
-    d = {'weekday' : '%a',
-            'month' : '%b',
-            'day' : '%d',
-            'year' : '%Y',
-            'hour' : '%H',
-            'minute' : '%M',
-            'second' : '%S',
-            'zone' : '%Z',
-            'offset' : '%z',
-            'ignore' : '%f'} # HACK Actually %f stands for microseconds
-    hour_format = ':'.join([d['hour'], d['minute'], d['second']])
-    zone_format = d['zone'] + d['offset']
-    ignore = '(-{})'.format(d['ignore'])
-    date_format = ' '.join([d['weekday'], d['month'], d['day'], d['year'],
+    weekday = '%a'
+    month = '%b'
+    day = '%d'
+    year = '%Y'
+    hour = '%H'
+    minute = '%M'
+    second = '%S'
+    zone = '%Z'
+    offset = '%z'
+    ignore = '%f' # HACK Actually %f stands for microseconds
+    hour_format = ':'.join([hour, minute, second])
+    zone_format = zone + offset
+    ignore = '(-{})'.format(ignore)
+    date_format = ' '.join([weekday, month, day, year,
                             hour_format, zone_format, ignore])
 
     return [datetime.strptime(i, date_format) for i in data_array]
