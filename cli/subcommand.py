@@ -1,10 +1,10 @@
 import argparse
 import os
-import subprocess
 import sys
 
 import checker
 import cxfeed
+import cxpullsubprocess
 
 class SubcmdException(BaseException):
     def __init__(self, cmd):
@@ -46,8 +46,7 @@ class CxdbSubcmd(Subcommand):
 class PullSubcmd(CxdbSubcmd):
     name = 'pull'
     description = 'Download data from Caixa and update cxdb database'
-    engine = 'phantomjs'
-    cxpull = os.path.join(sys.path[0], '..', 'cxpull', 'cxpull.js')
+    cxpull = cxpullsubprocess.CxpullSubprocess()
 
     def setup(self):
         self.set_cxdb_arg(True)
@@ -61,10 +60,7 @@ class PullSubcmd(CxdbSubcmd):
         except Exception as e:
             print(e)
             return 1
-        cmd = [self.engine, self.cxpull, '--cxdb', self.args.cxdb]
-        if self.args.debug:
-            cmd.append('--debug')
-        return subprocess.run(cmd).returncode
+        return self.cxpull.launch_subprocess(self.args.cxdb, self.args.debug)
 
 class FeedSubcmd(CxdbSubcmd):
     name = 'feed'
