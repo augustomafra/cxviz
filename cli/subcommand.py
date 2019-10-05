@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 
+import checker
 import cxfeed
 
 class SubcmdException(BaseException):
@@ -33,29 +34,12 @@ class Subcommand(object):
         self.parse()
         raise UnimplementedSubcmd(self.name)
 
-def readable_path(path):
-    if not os.access(path, os.R_OK):
-        raise Exception('No read access on path: {}'.format(path))
-    return path
-
-def maybe_dir(maybe_dir):
-    if not os.path.isdir(maybe_dir):
-        os.mkdir(maybe_dir)
-
-    just_dir = maybe_dir
-    if not os.access(just_dir, os.W_OK):
-        raise Exception('No write access on directory: {}'.format(just_dir))
-    if not os.access(just_dir, os.R_OK):
-        raise Exception('No read access on directory: {}'.format(just_dir))
-
-    return just_dir
-
 class CxdbSubcmd(Subcommand):
     cxdb = os.path.join(sys.path[0], '..', 'cxdb')
     def set_cxdb_arg(self, create_if_needed):
         self.parser.add_argument('--cxdb',
                                  action='store',
-                                 type=maybe_dir if create_if_needed else readable_path,
+                                 type=checker.maybe_dir if create_if_needed else checker.readable_path,
                                  default=self.cxdb,
                                  help='Path to database. Default: {}'.format(self.cxdb))
 
@@ -94,7 +78,7 @@ class FeedSubcmd(CxdbSubcmd):
     def run(self):
         try:
             self.parse()
-            cxfeed.show_feed(self.args.cxdb, readable_path(self.config))
+            cxfeed.show_feed(self.args.cxdb, checker.readable_path(self.config))
         except cxfeed.ConfigError as e:
             print('Error when loading config file: {}'.format(self.config))
             print(e)
