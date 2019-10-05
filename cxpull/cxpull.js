@@ -24,7 +24,16 @@ try {
 } catch(_) {
     phantom.exit(1);
 }
+
 var cxdb = args.cxdb;
+if (args.unlock) {
+    try {
+        pagehandler.releaseAndExit(cxdb);
+    } catch(_) {
+        phantom.exit(1);
+    }
+}
+
 pagehandler.setDebug(args.debug);
 pagehandler.pullCxdb(url, cxdb);
 

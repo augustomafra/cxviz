@@ -170,6 +170,7 @@ var pullCxdb = function(url, cxdb) {
 
 module.exports = {
     pullCxdb : pullCxdb,
-    setDebug : setDebug
+    setDebug : setDebug,
+    releaseAndExit : releaseAndExit
 }
 

@@ -22,7 +22,8 @@ module.exports = {
             util.checkError('fail', 'Error: Unable to find cxdb path: ' + cxdb);
         }
         var debug = args.indexOf('--debug') !== -1;
-        return {cxdb : cxdb, debug : debug};
+        var unlock = args.indexOf('--unlock') !== -1;
+        return {cxdb : cxdb, debug : debug, unlock : unlock};
     }
 }
 

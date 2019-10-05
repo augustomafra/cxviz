@@ -60,7 +60,23 @@ class PullSubcmd(CxdbSubcmd):
         except Exception as e:
             print(e)
             return 1
-        return self.cxpull.launch_subprocess(self.args.cxdb, self.args.debug)
+        return self.cxpull.pull(self.args.cxdb, self.args.debug)
+
+class UnlockSubcmd(CxdbSubcmd):
+    name = 'unlock'
+    description = 'Unlock cxdb directory locked by previous cxviz run'
+    cxpull = cxpullsubprocess.CxpullSubprocess()
+
+    def setup(self):
+        self.set_cxdb_arg(True)
+
+    def run(self):
+        try:
+            self.parse()
+        except Exception as e:
+            print(e)
+            return 1
+        return self.cxpull.unlock(self.args.cxdb)
 
 class FeedSubcmd(CxdbSubcmd):
     name = 'feed'

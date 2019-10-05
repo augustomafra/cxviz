@@ -45,6 +45,7 @@ var lock = function(cxdb) {
         console.log('Waiting lock on cxdb: ' + cxdb);
     }
     while (fs.exists(lockFile)) {}
+    console.log('Locked cxdb directory: ' + cxdb);
     fs.touch(lockFile);
 }
 
@@ -54,6 +55,7 @@ var release = function(cxdb) {
         util.checkError('fail',
             'Error: lock on cxdb \'' + cxdb + '\' was not found when releasing database');
     }
+    console.log('Unlocked cxdb directory: ' + cxdb);
     fs.remove(lockFile);
 }
 
