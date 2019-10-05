@@ -83,6 +83,9 @@ class FeedSubcmd(CxdbSubcmd):
             print('Error when loading config file: {}'.format(self.config))
             print(e)
             return 1
+        except cxfeed.UnknownFund as e:
+            print('Error on config file \'{}\': unknown fund: {}'.format(self.config, e))
+            return 1
         except Exception as e:
             print(e)
             return 1

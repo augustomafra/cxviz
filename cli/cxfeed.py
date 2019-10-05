@@ -6,10 +6,15 @@ import matplotlib.pyplot
 import numpy
 import os
 
+import checker
+
 def set_locale():
     locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
 
 class ConfigError(BaseException):
+    pass
+
+class UnknownFund(BaseException):
     pass
 
 class CxvizConfig(object):
@@ -40,7 +45,12 @@ class CxvizConfig(object):
 class CxdbFund(object):
     def __init__(self, cxdb_path, fund):
         self.fund = fund
-        with open(os.path.join(cxdb_path, '{}.csv'.format(fund)), 'r') as csvfile:
+        csv_path = os.path.join(cxdb_path, '{}.csv'.format(fund))
+        try:
+            checker.readable_path(csv_path)
+        except Exception as e:
+            raise UnknownFund(fund)
+        with open(csv_path, 'r') as csvfile:
             csvreader = csv.reader(csvfile, delimiter=';', strict=True)
             self.parse_csv(csvreader)
 
