@@ -15,9 +15,6 @@ class UnknownSubcmd(SubcmdException):
 class UnimplementedSubcmd(SubcmdException):
     pass
 
-class SubcmdConfigError(SubcmdException):
-    pass
-
 class Subcommand(object):
     def __init__(self):
         self.parser = argparse.ArgumentParser(description=self.description)
@@ -93,19 +90,17 @@ class FeedSubcmd(CxdbSubcmd):
     def setup(self):
         self.set_cxdb_arg(False)
         cxfeed.set_locale()
-        try:
-            cxfeed.read_config(readable_path(self.config))
-        except Exception as e:
-            print('Error when loading config file: {}'.format(self.config))
-            print(e)
-            raise SubcmdConfigError(self.name)
 
     def run(self):
         try:
             self.parse()
+            cxfeed.show_feed(self.args.cxdb, readable_path(self.config))
+        except cxfeed.ConfigError as e:
+            print('Error when loading config file: {}'.format(self.config))
+            print(e)
+            return 1
         except Exception as e:
             print(e)
             return 1
-        cxfeed.show_feed(self.args.cxdb)
         return 0
 

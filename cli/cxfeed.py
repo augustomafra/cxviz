@@ -9,17 +9,33 @@ import os
 def set_locale():
     locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
 
-cxviz_config = {'funds' : [], 'metrics' : []}
-def read_config(config_file):
-    config = configparser.ConfigParser(allow_no_value=True)
-    config.optionxform = str # Make the parser case sensitive
-    config.read(config_file)
-    if 'funds' in config:
-        for fund in config['funds']:
-            cxviz_config['funds'].append(fund)
-    if 'metrics' in config:
-        for metric in config['metrics']:
-            cxviz_config['metrics'].append(metric)
+class ConfigError(BaseException):
+    pass
+
+class CxvizConfig(object):
+    def __init__(self, config_file):
+        self.data = {'funds' : [], 'metrics' : []}
+        try:
+            config = configparser.ConfigParser(allow_no_value=True)
+            self.set_case_sensitive(config)
+            config.read(config_file)
+        except Exception as e:
+            raise ConfigError(e)
+        if 'funds' in config:
+            for fund in config['funds']:
+                self.data['funds'].append(fund)
+        if 'metrics' in config:
+            for metric in config['metrics']:
+                self.data['metrics'].append(metric)
+
+    def set_case_sensitive(self, config):
+        config.optionxform = str
+
+    def funds(self):
+        return self.data['funds']
+
+    def metrics(self):
+        return self.data['metrics']
 
 class CxdbFund(object):
     def __init__(self, cxdb_path, fund):
@@ -40,10 +56,10 @@ class CxdbFund(object):
                     self.data[col].append(line[i])
                     i += 1
 
-    def subplot(self, index, metric):
-        if index > len(cxviz_config['metrics']):
+    def subplot(self, num_rows, index, metric):
+        if index > num_rows:
             raise Exception('Invalid subplot index')
-        matplotlib.pyplot.subplot(len(cxviz_config['metrics']), 1, index)
+        matplotlib.pyplot.subplot(num_rows, 1, index)
         if index == 1:
             matplotlib.pyplot.title(self.fund)
         date_header = list(self.data.keys())[0]
@@ -75,13 +91,14 @@ def date(data_array):
 
     return [datetime.strptime(i, date_format) for i in data_array]
 
-def show_feed(cxdb_path):
-    for fund in cxviz_config['funds']:
+def show_feed(cxdb_path, config_file):
+    cxviz_config = CxvizConfig(config_file)
+    for fund in cxviz_config.funds():
         matplotlib.pyplot.figure()
         cxdb_fund = CxdbFund(cxdb_path, fund)
         index = 1
-        for metric in cxviz_config['metrics']:
-            cxdb_fund.subplot(index, metric)
+        for metric in cxviz_config.metrics():
+            cxdb_fund.subplot(len(cxviz_config.metrics()), index, metric)
             index += 1
     matplotlib.pyplot.show()
 
