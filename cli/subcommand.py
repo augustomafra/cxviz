@@ -80,8 +80,9 @@ class UnlockSubcmd(CxdbSubcmd):
 
 class FeedSubcmd(CxdbSubcmd):
     name = 'feed'
-    description = 'Show feed with data about investiment funds'
+    description = 'Pull and show feed with data about investiment funds'
     config = os.path.join(sys.path[0], '..', '.cxviz');
+    cxpull = cxpullsubprocess.CxpullSubprocess()
 
     def setup(self):
         self.set_cxdb_arg(False)
@@ -90,6 +91,9 @@ class FeedSubcmd(CxdbSubcmd):
     def run(self):
         try:
             self.parse()
+            status = self.cxpull.pull(self.args.cxdb, False)
+            if status == 1:
+                print('Warning: cxdb was not updated correctly: {}'.format(self.args.cxdb))
             cxfeed.show_feed(self.args.cxdb, checker.readable_path(self.config))
         except cxfeed.ConfigError as e:
             print('Error when loading config file: {}'.format(self.config))
