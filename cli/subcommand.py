@@ -68,7 +68,7 @@ class UnlockSubcmd(CxdbSubcmd):
     cxpull = cxpullsubprocess.CxpullSubprocess()
 
     def setup(self):
-        self.set_cxdb_arg(True)
+        self.set_cxdb_arg(False)
 
     def run(self):
         try:
@@ -85,7 +85,7 @@ class FeedSubcmd(CxdbSubcmd):
     cxpull = cxpullsubprocess.CxpullSubprocess()
 
     def setup(self):
-        self.set_cxdb_arg(False)
+        self.set_cxdb_arg(True)
         cxfeed.set_locale()
 
     def run(self):
