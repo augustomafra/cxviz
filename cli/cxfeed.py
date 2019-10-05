@@ -21,7 +21,7 @@ def read_config(config_file):
         for metric in config['metrics']:
             cxviz_config['metrics'].append(metric)
 
-class Cxdb(object):
+class CxdbFund(object):
     def __init__(self, cxdb_path, fund):
         self.fund = fund
         with open(os.path.join(cxdb_path, '{}.csv'.format(fund)), 'r') as csvfile:
@@ -78,10 +78,10 @@ def date(data_array):
 def show_feed(cxdb_path):
     for fund in cxviz_config['funds']:
         matplotlib.pyplot.figure()
-        cxdb = Cxdb(cxdb_path, fund)
+        cxdb_fund = CxdbFund(cxdb_path, fund)
         index = 1
         for metric in cxviz_config['metrics']:
-            cxdb.subplot(index, metric)
+            cxdb_fund.subplot(index, metric)
             index += 1
     matplotlib.pyplot.show()
 
