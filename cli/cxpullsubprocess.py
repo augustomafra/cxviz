@@ -4,7 +4,7 @@ import sys
 import subprocess
 
 class CxpullSubprocess(object):
-    engine = 'phantomjs'
+    engine = '/home/augusto/phantomjs-2.1.1-linux-x86_64/bin/phantomjs'
     cxpull = os.path.join(sys.path[0], '..', 'cxpull', 'cxpull.js')
 
     def get_cmdline(self, cxdb):
