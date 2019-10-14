@@ -24,7 +24,14 @@ class Subcommand(object):
                 and hasattr(self, 'parser')):
             raise UnimplementedSubcmd('Missing name, description or parser attribute')
 
+    def set_usage_string(self):
+        usage = self.parser.format_usage()
+        usage = usage.replace('usage: ', '')
+        usage = usage.replace('cxviz', 'cxviz {}'.format(self.name))
+        self.parser.usage = usage
+
     def setup(self):
+        self.set_usage_string()
         pass
 
     def parse(self):
@@ -53,6 +60,7 @@ class PullSubcmd(CxdbSubcmd):
         self.parser.add_argument('--debug',
                                  action='store_true',
                                  help='Enable verbose log')
+        self.set_usage_string()
 
     def run(self):
         try:
@@ -69,6 +77,7 @@ class UnlockSubcmd(CxdbSubcmd):
 
     def setup(self):
         self.set_cxdb_arg(False)
+        self.set_usage_string()
 
     def run(self):
         try:
@@ -86,6 +95,7 @@ class FeedSubcmd(CxdbSubcmd):
 
     def setup(self):
         self.set_cxdb_arg(True)
+        self.set_usage_string()
         cxfeed.set_locale()
 
     def run(self):
