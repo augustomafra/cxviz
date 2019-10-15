@@ -21,7 +21,6 @@ Available commands
     def add_subcommand(self, subcommand):
         if subcommand.name in self.subcommands:
             raise RepeatedSubcmd(subcommand.name)
-        subcommand.setup()
         self.subcommands[subcommand.name] = subcommand.run
         self.usage += self.HELP_INDENT \
                     + subcommand.name \

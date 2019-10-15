@@ -13,16 +13,11 @@ class SubcmdException(BaseException):
 class UnknownSubcmd(SubcmdException):
     pass
 
-class UnimplementedSubcmd(SubcmdException):
-    pass
-
 class Subcommand(object):
     def __init__(self):
+        if not (hasattr(self, 'name') and hasattr(self, 'description')):
+            raise UnknownSubcmd('Missing name or description attributes')
         self.parser = argparse.ArgumentParser(description=self.description)
-        if not (hasattr(self, 'name')
-                and hasattr(self, 'description')
-                and hasattr(self, 'parser')):
-            raise UnimplementedSubcmd('Missing name, description or parser attribute')
 
     def set_usage_string(self):
         usage = self.parser.format_usage()
@@ -30,20 +25,13 @@ class Subcommand(object):
         usage = usage.replace('cxviz', 'cxviz {}'.format(self.name))
         self.parser.usage = usage
 
-    def setup(self):
-        self.set_usage_string()
-        pass
-
-    def parse(self):
-        self.args = self.parser.parse_args(sys.argv[2:])
-
     def run(self):
-        self.parse()
-        raise UnimplementedSubcmd(self.name)
+        self.args = self.parser.parse_args(sys.argv[2:])
 
 class CxdbSubcmd(Subcommand):
     cxdb = os.path.join(sys.path[0], '..', 'cxdb')
-    def set_cxdb_arg(self, create_if_needed):
+    def __init__(self, create_if_needed):
+        super().__init__()
         self.parser.add_argument('--cxdb',
                                  action='store',
                                  type=checker.maybe_dir if create_if_needed else checker.readable_path,
@@ -55,8 +43,8 @@ class PullSubcmd(CxdbSubcmd):
     description = 'Download data from Caixa and update cxdb database'
     cxpull = cxpullsubprocess.CxpullSubprocess()
 
-    def setup(self):
-        self.set_cxdb_arg(True)
+    def __init__(self):
+        super().__init__(True)
         self.parser.add_argument('--debug',
                                  action='store_true',
                                  help='Enable verbose log')
@@ -64,7 +52,7 @@ class PullSubcmd(CxdbSubcmd):
 
     def run(self):
         try:
-            self.parse()
+            super().run()
         except Exception as e:
             print(e)
             return 1
@@ -75,13 +63,13 @@ class UnlockSubcmd(CxdbSubcmd):
     description = 'Unlock cxdb directory locked by previous cxviz run'
     cxpull = cxpullsubprocess.CxpullSubprocess()
 
-    def setup(self):
-        self.set_cxdb_arg(False)
+    def __init__(self):
+        super().__init__(False)
         self.set_usage_string()
 
     def run(self):
         try:
-            self.parse()
+            super().run()
         except Exception as e:
             print(e)
             return 1
@@ -93,14 +81,14 @@ class FeedSubcmd(CxdbSubcmd):
     config = os.path.join(sys.path[0], '..', '.cxviz');
     cxpull = cxpullsubprocess.CxpullSubprocess()
 
-    def setup(self):
-        self.set_cxdb_arg(True)
+    def __init__(self):
+        super().__init__(True)
         self.set_usage_string()
         cxfeed.set_locale()
 
     def run(self):
         try:
-            self.parse()
+            super().run()
             status = self.cxpull.pull(self.args.cxdb, False)
             if status == 1:
                 print('Warning: cxdb was not updated correctly: {}'.format(self.args.cxdb))
