@@ -33,6 +33,8 @@ class Subcommand(object):
 
 class CxdbSubcmd(Subcommand):
     cxdb = os.path.join(sys.path[0], '..', 'cxdb')
+    cxpull = cxpullsubprocess.CxpullSubprocess()
+
     def __init__(self):
         super().__init__()
         if not hasattr(self, 'check_cxdb'):
@@ -54,7 +56,6 @@ class CreatableCxdbSubcmd(CxdbSubcmd):
 class PullSubcmd(CreatableCxdbSubcmd):
     name = 'pull'
     description = 'Download data from Caixa and update cxdb database'
-    cxpull = cxpullsubprocess.CxpullSubprocess()
 
     def __init__(self):
         super().__init__()
@@ -74,7 +75,6 @@ class PullSubcmd(CreatableCxdbSubcmd):
 class UnlockSubcmd(ReadableCxdbSubcmd):
     name = 'unlock'
     description = 'Unlock cxdb directory locked by previous cxviz run'
-    cxpull = cxpullsubprocess.CxpullSubprocess()
 
     def __init__(self):
         super().__init__()
@@ -92,7 +92,6 @@ class FeedSubcmd(CreatableCxdbSubcmd):
     name = 'feed'
     description = 'Pull and show feed with data about investiment funds'
     config = os.path.join(sys.path[0], '..', '.cxviz');
-    cxpull = cxpullsubprocess.CxpullSubprocess()
 
     def __init__(self):
         super().__init__()
