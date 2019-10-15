@@ -13,10 +13,13 @@ class SubcmdException(BaseException):
 class UnknownSubcmd(SubcmdException):
     pass
 
+class InvalidSubcmd(SubcmdException):
+    pass
+
 class Subcommand(object):
     def __init__(self):
         if not (hasattr(self, 'name') and hasattr(self, 'description')):
-            raise UnknownSubcmd('Missing name or description attributes')
+            raise InvalidSubcmd('Missing name or description attributes')
         self.parser = argparse.ArgumentParser(description=self.description)
 
     def set_usage_string(self):
@@ -30,21 +33,31 @@ class Subcommand(object):
 
 class CxdbSubcmd(Subcommand):
     cxdb = os.path.join(sys.path[0], '..', 'cxdb')
-    def __init__(self, create_if_needed):
+    def __init__(self):
         super().__init__()
+        if not hasattr(self, 'check_cxdb'):
+            raise InvalidSubcmd(self.name)
         self.parser.add_argument('--cxdb',
                                  action='store',
-                                 type=checker.maybe_dir if create_if_needed else checker.readable_path,
+                                 type=self.check_cxdb,
                                  default=self.cxdb,
                                  help='Path to database. Default: {}'.format(self.cxdb))
 
-class PullSubcmd(CxdbSubcmd):
+class ReadableCxdbSubcmd(CxdbSubcmd):
+    def check_cxdb(self, cxdb):
+        return checker.readable_path(cxdb)
+
+class CreatableCxdbSubcmd(CxdbSubcmd):
+    def check_cxdb(self, cxdb):
+        return checker.maybe_dir(cxdb)
+
+class PullSubcmd(CreatableCxdbSubcmd):
     name = 'pull'
     description = 'Download data from Caixa and update cxdb database'
     cxpull = cxpullsubprocess.CxpullSubprocess()
 
     def __init__(self):
-        super().__init__(True)
+        super().__init__()
         self.parser.add_argument('--debug',
                                  action='store_true',
                                  help='Enable verbose log')
@@ -58,13 +71,13 @@ class PullSubcmd(CxdbSubcmd):
             return 1
         return self.cxpull.pull(self.args.cxdb, self.args.debug)
 
-class UnlockSubcmd(CxdbSubcmd):
+class UnlockSubcmd(ReadableCxdbSubcmd):
     name = 'unlock'
     description = 'Unlock cxdb directory locked by previous cxviz run'
     cxpull = cxpullsubprocess.CxpullSubprocess()
 
     def __init__(self):
-        super().__init__(False)
+        super().__init__()
         self.set_usage_string()
 
     def run(self):
@@ -75,14 +88,14 @@ class UnlockSubcmd(CxdbSubcmd):
             return 1
         return self.cxpull.unlock(self.args.cxdb)
 
-class FeedSubcmd(CxdbSubcmd):
+class FeedSubcmd(CreatableCxdbSubcmd):
     name = 'feed'
     description = 'Pull and show feed with data about investiment funds'
     config = os.path.join(sys.path[0], '..', '.cxviz');
     cxpull = cxpullsubprocess.CxpullSubprocess()
 
     def __init__(self):
-        super().__init__(True)
+        super().__init__()
         self.set_usage_string()
         cxfeed.set_locale()
 
