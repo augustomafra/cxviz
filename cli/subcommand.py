@@ -3,6 +3,7 @@ import os
 import sys
 
 import checker
+import cxlist
 import cxfeed
 import cxpullsubprocess
 
@@ -87,6 +88,34 @@ class UnlockSubcmd(ReadableCxdbSubcmd):
             print(e)
             return 1
         return self.cxpull.unlock(self.args.cxdb)
+
+class ListSubcmd(ReadableCxdbSubcmd):
+    name = 'list'
+    description = 'List funds or metrics available in cxdb database'
+
+    def __init__(self):
+        super().__init__()
+        self.parser.add_argument('--funds',
+                                 action='store_true',
+                                 help='List funds in cxdb')
+        self.parser.add_argument('--metrics',
+                                 action='store_true',
+                                 help='List metrics in cxdb')
+        self.set_usage_string()
+
+    def run(self):
+        try:
+            super().run()
+            if not (self.args.funds or self.args.metrics):
+                self.parser.error('Must add --funds or --metrics switches')
+            if self.args.funds:
+                print('\n'.join(cxlist.list_funds(self.args.cxdb)))
+            if self.args.metrics:
+                print('\n'.join(cxlist.list_metrics(self.args.cxdb)))
+        except Exception as e:
+            print(e)
+            return 1
+        return 0
 
 class FeedSubcmd(CreatableCxdbSubcmd):
     name = 'feed'
