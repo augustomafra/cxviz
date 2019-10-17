@@ -8,6 +8,9 @@ import cxlist
 import cxfeed
 import cxpullsubprocess
 
+sys.path.append(os.path.join(sys.path[0], '..', 'gui'))
+import cxgui
+
 class SubcmdException(BaseException):
     def __init__(self, cmd):
         self.command = cmd
@@ -145,6 +148,23 @@ class FeedSubcmd(CreatableCxdbSubcmd):
         except cxfeed.UnknownMetric as e:
             print('Error on config file \'{}\': unknown metric: {}'.format(self.config, e))
             return 1
+        except Exception as e:
+            print(e)
+            return 1
+        return 0
+
+class GuiSubcmd(Subcommand):
+    name = 'gui'
+    description = 'Open gui application'
+
+    def __init__(self):
+        super().__init__()
+
+    def run(self):
+        try:
+            super().run()
+            gui = cxgui.CxGui()
+            gui.loop()
         except Exception as e:
             print(e)
             return 1
