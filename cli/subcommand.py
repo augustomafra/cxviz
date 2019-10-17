@@ -165,7 +165,8 @@ class GuiSubcmd(ReadableCxdbSubcmd):
     def run(self):
         try:
             super().run()
-            gui = cxgui.CxGui(self.args.cxdb, self.config)
+            gui = cxgui.CxGui(self.args.cxdb,
+                              checker.readable_path(self.config))
             gui.loop()
         except Exception as e:
             print(e)
