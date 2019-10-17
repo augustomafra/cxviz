@@ -153,17 +153,18 @@ class FeedSubcmd(CreatableCxdbSubcmd):
             return 1
         return 0
 
-class GuiSubcmd(Subcommand):
+class GuiSubcmd(ReadableCxdbSubcmd):
     name = 'gui'
     description = 'Open gui application'
 
     def __init__(self):
         super().__init__()
+        self.set_usage_string()
 
     def run(self):
         try:
             super().run()
-            gui = cxgui.CxGui()
+            gui = cxgui.CxGui(self.args.cxdb)
             gui.loop()
         except Exception as e:
             print(e)
