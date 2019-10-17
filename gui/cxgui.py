@@ -44,5 +44,6 @@ class CxGui(object):
         cxfeed.plot_fund(self.cxdb, self.config, fund)
 
     def loop(self):
+        cxfeed.show_feed(self.cxdb, self.config)
         self.root.mainloop()
 
