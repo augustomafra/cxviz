@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 
+sys.path.append(os.path.join(sys.path[0], '..', 'core'))
 import checker
 import cxlist
 import cxfeed
@@ -120,7 +121,7 @@ class ListSubcmd(ReadableCxdbSubcmd):
 class FeedSubcmd(CreatableCxdbSubcmd):
     name = 'feed'
     description = 'Pull and show feed with data about investiment funds'
-    config = os.path.join(sys.path[0], '..', '.cxviz');
+    config = os.path.join(sys.path[0], '..', '.cxviz')
 
     def __init__(self):
         super().__init__()
