@@ -15,9 +15,12 @@ class CxGui(object):
 
     def create_fund_buttons(self, funds):
         self.configure_scroll_canvas()
+        largest_name = max(funds, key=lambda fund: len(fund))
+        width = len(largest_name)
         for fund in funds:
             tk.Button(self.frame,
                       text=fund,
+                      width=width,
                       bg='gray',
                       command=lambda fund=fund: self.plot(fund)).pack()
 
