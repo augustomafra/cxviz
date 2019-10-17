@@ -108,14 +108,22 @@ def date(data_array):
 
     return [datetime.strptime(i, date_format) for i in data_array]
 
+def add_fund_to_plot(cxdb_path, config, fund):
+    matplotlib.pyplot.figure()
+    cxdb_fund = CxdbFund(cxdb_path, fund)
+    index = 1
+    for metric in config.metrics():
+        cxdb_fund.subplot(len(config.metrics()), index, metric)
+        index += 1
+
 def show_feed(cxdb_path, config_file):
     cxviz_config = CxvizConfig(config_file)
     for fund in cxviz_config.funds():
-        matplotlib.pyplot.figure()
-        cxdb_fund = CxdbFund(cxdb_path, fund)
-        index = 1
-        for metric in cxviz_config.metrics():
-            cxdb_fund.subplot(len(cxviz_config.metrics()), index, metric)
-            index += 1
+        add_fund_to_plot(cxdb_path, cxviz_config, fund)
+    matplotlib.pyplot.show()
+
+def plot_fund(cxdb_path, config_file, fund):
+    cxviz_config = CxvizConfig(config_file)
+    add_fund_to_plot(cxdb_path, cxviz_config, fund)
     matplotlib.pyplot.show()
 

@@ -156,6 +156,7 @@ class FeedSubcmd(CreatableCxdbSubcmd):
 class GuiSubcmd(ReadableCxdbSubcmd):
     name = 'gui'
     description = 'Open gui application'
+    config = os.path.join(sys.path[0], '..', '.cxviz')
 
     def __init__(self):
         super().__init__()
@@ -164,7 +165,7 @@ class GuiSubcmd(ReadableCxdbSubcmd):
     def run(self):
         try:
             super().run()
-            gui = cxgui.CxGui(self.args.cxdb)
+            gui = cxgui.CxGui(self.args.cxdb, self.config)
             gui.loop()
         except Exception as e:
             print(e)

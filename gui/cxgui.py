@@ -3,13 +3,15 @@ import sys
 import tkinter as tk
 
 sys.path.append(os.path.join(sys.path[0], '..', 'core'))
+import cxfeed
 import cxlist
 
 class CxGui(object):
-    def __init__(self, cxdb_path):
+    def __init__(self, cxdb_path, config_file):
         self.cxdb = cxdb_path
+        self.config = config_file
         self.root = tk.Tk()
-        self.create_fund_buttons(cxlist.list_funds(self.cxdb))
+        self.create_fund_buttons(sorted(cxlist.list_funds(self.cxdb)))
 
     def create_fund_buttons(self, funds):
         self.configure_scroll_canvas()
@@ -17,7 +19,7 @@ class CxGui(object):
             tk.Button(self.frame,
                       text=fund,
                       bg='gray',
-                      command=lambda fund=fund: print(fund)).pack()
+                      command=lambda fund=fund: self.plot(fund)).pack()
 
     def configure_scroll_canvas(self):
         self.canvas = tk.Canvas(self.root)
@@ -34,6 +36,9 @@ class CxGui(object):
                                   tags='self.frame')
         self.frame.bind('<Configure>',
                         lambda event: self.canvas.configure(scrollregion=self.canvas.bbox('all')))
+
+    def plot(self, fund):
+        cxfeed.plot_fund(self.cxdb, self.config, fund)
 
     def loop(self):
         self.root.mainloop()
