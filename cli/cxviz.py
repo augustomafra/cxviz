@@ -43,7 +43,6 @@ def main():
         cxviz.add_subcommand(subcommand.PullSubcmd())
         cxviz.add_subcommand(subcommand.ListSubcmd())
         cxviz.add_subcommand(subcommand.UnlockSubcmd())
-        cxviz.add_subcommand(subcommand.GuiSubcmd())
     except RepeatedSubcmd as e:
         print('Invalid setup: Subcommand \'{}\' is repeated'.format(e))
         exit(1)

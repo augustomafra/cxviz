@@ -137,7 +137,10 @@ class FeedSubcmd(CreatableCxdbSubcmd):
             status = self.cxpull.pull(self.args.cxdb, False)
             if status == 1:
                 print('Warning: cxdb was not updated correctly: {}'.format(self.args.cxdb))
-            cxfeed.show_feed(self.args.cxdb, checker.readable_path(self.config))
+            checker.readable_path(self.config)
+            gui = cxgui.CxGui(self.args.cxdb, self.config)
+            cxfeed.show_feed(self.args.cxdb, self.config)
+            gui.loop()
         except cxfeed.ConfigError as e:
             print('Error when loading config file: {}'.format(self.config))
             print(e)
@@ -148,26 +151,6 @@ class FeedSubcmd(CreatableCxdbSubcmd):
         except cxfeed.UnknownMetric as e:
             print('Error on config file \'{}\': unknown metric: {}'.format(self.config, e))
             return 1
-        except Exception as e:
-            print(e)
-            return 1
-        return 0
-
-class GuiSubcmd(ReadableCxdbSubcmd):
-    name = 'gui'
-    description = 'Open gui application'
-    config = os.path.join(sys.path[0], '..', '.cxviz')
-
-    def __init__(self):
-        super().__init__()
-        self.set_usage_string()
-
-    def run(self):
-        try:
-            super().run()
-            gui = cxgui.CxGui(self.args.cxdb,
-                              checker.readable_path(self.config))
-            gui.loop()
         except Exception as e:
             print(e)
             return 1
