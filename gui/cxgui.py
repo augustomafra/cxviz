@@ -17,6 +17,7 @@ class CxGui(object):
         self.configure_scroll_canvas()
         largest_name = max(funds, key=lambda fund: len(fund))
         width = len(largest_name)
+        self.set_window_width(width)
         for fund in funds:
             tk.Button(self.frame,
                       text=fund,
@@ -32,13 +33,17 @@ class CxGui(object):
                                       command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         self.scrollbar.pack(fill=tk.Y, side=tk.RIGHT)
-        self.canvas.pack(expand=True, fill=tk.BOTH)
+        self.canvas.pack(expand=True, fill=tk.Y)
         self.canvas.create_window((4, 4),
                                   window=self.frame,
-                                  anchor='nw',
+                                  anchor=tk.NW,
                                   tags='self.frame')
         self.frame.bind('<Configure>',
-                        lambda event: self.canvas.configure(scrollregion=self.canvas.bbox('all')))
+                        lambda event:
+                            self.canvas.configure(scrollregion=self.canvas.bbox(tk.ALL)))
+
+    def set_window_width(self, width):
+        self.root.maxsize(int(9.2 * width), 5000)
 
     def plot(self, fund):
         cxfeed.plot_fund(self.cxdb, self.config, fund)
