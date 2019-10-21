@@ -11,6 +11,7 @@ class CxGui(object):
         self.cxdb = cxdb_path
         self.config = config_file
         self.root = tk.Tk()
+        self.root.title('cxviz')
         self.create_fund_buttons(sorted(cxlist.list_funds(self.cxdb)))
 
     def create_fund_buttons(self, funds):
