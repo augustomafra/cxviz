@@ -1,8 +1,3 @@
-import matplotlib
-matplotlib.use('TkAgg')
-from matplotlib.backends.backend_tkagg \
-        import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-
 import os
 import sys
 import tkinter as tk
@@ -10,6 +5,7 @@ import tkinter as tk
 sys.path.append(os.path.join(sys.path[0], '..', 'core'))
 import cxfeed
 import cxlist
+import plotwindow
 
 class CxGui(object):
     def __init__(self, cxdb_path, config_file):
@@ -22,28 +18,17 @@ class CxGui(object):
 
     def init_config_canvas(self):
         self.config_canvas = tk.Canvas(self.root)
+        self.config_canvas.pack(expand=False, fill=tk.Y, side=tk.LEFT)
         self.create_fund_buttons(sorted(cxlist.list_funds(self.cxdb)))
 
     def init_plot_canvas(self):
         self.plot_canvas = tk.Canvas(self.root)
+        self.plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.RIGHT)
         self.plot_figure()
         self.plot_figure()
 
     def plot_figure(self):
-        plot_window = tk.Frame(self.plot_canvas)
-        self.plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.RIGHT)
-        plot_window.pack(side=tk.LEFT, expand=False)
-        figure = matplotlib.figure.Figure(figsize=(5, 5), dpi=100)
-        plot = figure.add_subplot(1, 1, 1)
-        plot.plot([1,2,3,4,5,6,7,8],[5,6,1,3,8,9,3,5])
-
-        canvas = FigureCanvasTkAgg(figure, plot_window)
-        canvas.show()
-        canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-        toolbar = NavigationToolbar2TkAgg(canvas, plot_window)
-        toolbar.update()
-        canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        plot_window = plotwindow.PlotWindow(self.plot_canvas)
 
     def create_fund_buttons(self, funds):
         config_frame = self.create_config_frame()
@@ -64,7 +49,6 @@ class CxGui(object):
                                       command=self.config_canvas.yview)
         self.config_canvas.configure(yscrollcommand=self.scrollbar.set)
         self.scrollbar.pack(fill=tk.Y, side=tk.RIGHT)
-        self.config_canvas.pack(expand=False, fill=tk.Y, side=tk.LEFT)
         self.config_canvas.create_window((4, 4),
                                          window=config_frame,
                                          anchor=tk.NW,
