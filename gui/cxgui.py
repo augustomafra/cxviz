@@ -21,16 +21,13 @@ class CxGui(object):
         self.plot_figure()
 
     def plot_figure(self):
-        frame = tk.Frame(self.config_canvas)
-        self.config_canvas.pack(expand=True, fill=tk.BOTH)
-        self.config_canvas.create_window((900, 4),
-                                  window=frame,
-                                  anchor=tk.NE,
-                                  tags='frame')
-        frame.bind('<Configure>',
-                        lambda event:
-                            self.config_canvas.configure(scrollregion=self.config_canvas.bbox(tk.ALL)))
-
+        self.plot_canvas = tk.Canvas(self.root)
+        frame = tk.Frame(self.plot_canvas)
+        self.plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.RIGHT)
+        self.plot_canvas.create_window((700, 0),
+                                       window=frame,
+                                       anchor=tk.NE,
+                                       tags='frame')
         figure = matplotlib.figure.Figure(figsize=(5, 5), dpi=100)
         plot = figure.add_subplot(1, 1, 1)
         plot.plot([1,2,3,4,5,6,7,8],[5,6,1,3,8,9,3,5])
@@ -63,11 +60,11 @@ class CxGui(object):
                                       command=self.config_canvas.yview)
         self.config_canvas.configure(yscrollcommand=self.scrollbar.set)
         self.scrollbar.pack(fill=tk.Y, side=tk.RIGHT)
-        self.config_canvas.pack(expand=True, fill=tk.BOTH)
+        self.config_canvas.pack(expand=False, fill=tk.Y, side=tk.LEFT)
         self.config_canvas.create_window((4, 4),
-                                  window=config_frame,
-                                  anchor=tk.NW,
-                                  tags='config_frame')
+                                         window=config_frame,
+                                         anchor=tk.NW,
+                                         tags='config_frame')
         config_frame.bind('<Configure>',
                         lambda event:
                             self.config_canvas.configure(scrollregion=self.config_canvas.bbox(tk.ALL)))
