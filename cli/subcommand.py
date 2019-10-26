@@ -146,8 +146,9 @@ class FeedSubcmd(CreatableCxdbSubcmd):
             checker.readable_path(self.config)
             if not self.args.gui_only:
                 self.update_db()
-                cxfeed.show_feed(self.args.cxdb, self.config)
             gui = cxgui.CxGui(self.args.cxdb, self.config)
+            if not self.args.gui_only:
+                cxfeed.show_feed(self.args.cxdb, self.config)
             gui.loop()
         except cxfeed.ConfigError as e:
             print('Error when loading config file: {}'.format(self.config))
