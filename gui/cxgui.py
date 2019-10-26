@@ -25,7 +25,7 @@ class CxGui(object):
         self.plot_canvas = tk.Canvas(self.root)
         self.plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.RIGHT)
 
-        plot_frame = tk.Frame(self.plot_canvas)
+        self.plot_frame = tk.Frame(self.plot_canvas)
 
         scrollbar = tk.Scrollbar(self.plot_canvas,
                                  orient=tk.HORIZONTAL,
@@ -33,19 +33,15 @@ class CxGui(object):
         self.plot_canvas.configure(xscrollcommand=scrollbar.set)
         scrollbar.pack(fill=tk.X, side=tk.BOTTOM)
         self.plot_canvas.create_window((4, 4),
-                                       window=plot_frame,
+                                       window=self.plot_frame,
                                        anchor=tk.NW,
                                        tags='plot_frame')
-        plot_frame.bind('<Configure>',
-                        lambda event:
-                            self.plot_canvas.configure(scrollregion=self.plot_canvas.bbox(tk.ALL)))
+        self.plot_frame.bind('<Configure>',
+                             lambda event:
+                                 self.plot_canvas.configure(scrollregion=self.plot_canvas.bbox(tk.ALL)))
 
-        self.plot_figure(plot_frame)
-        self.plot_figure(plot_frame)
-        self.plot_figure(plot_frame)
-
-    def plot_figure(self, plot_frame):
-        plot_window = plotwindow.PlotWindow(plot_frame)
+    def plot_figure(self, figure):
+        plot_window = plotwindow.PlotWindow(self.plot_frame, figure)
 
     def create_fund_buttons(self, funds):
         config_frame = self.create_config_frame()
@@ -76,7 +72,8 @@ class CxGui(object):
         return config_frame
 
     def plot(self, fund):
-        cxfeed.plot_fund(self.cxdb, self.config, fund)
+        figure = cxfeed.plot_fund(self.cxdb, self.config, fund)
+        self.plot_figure(figure)
 
     def loop(self):
         self.root.mainloop()
