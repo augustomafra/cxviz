@@ -13,6 +13,7 @@ class CxGui(object):
         self.config = config_file
         self.root = tk.Tk()
         self.root.title('cxviz')
+        self.root.geometry('1000x600')
         self.init_config_canvas()
         self.init_plot_canvas()
         self.show_feed()
