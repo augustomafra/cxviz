@@ -21,15 +21,15 @@ class CxGui(object):
         self.plot_figure()
 
     def plot_figure(self):
-        frame = tk.Frame(self.canvas)
-        self.canvas.pack(expand=True, fill=tk.BOTH)
-        self.canvas.create_window((900, 4),
+        frame = tk.Frame(self.config_canvas)
+        self.config_canvas.pack(expand=True, fill=tk.BOTH)
+        self.config_canvas.create_window((900, 4),
                                   window=frame,
                                   anchor=tk.NE,
                                   tags='frame')
         frame.bind('<Configure>',
                         lambda event:
-                            self.canvas.configure(scrollregion=self.canvas.bbox(tk.ALL)))
+                            self.config_canvas.configure(scrollregion=self.config_canvas.bbox(tk.ALL)))
 
         figure = matplotlib.figure.Figure(figsize=(5, 5), dpi=100)
         plot = figure.add_subplot(1, 1, 1)
@@ -44,33 +44,34 @@ class CxGui(object):
         canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
     def create_fund_buttons(self, funds):
-        self.configure_scroll_canvas()
+        config_frame = self.create_config_frame()
         largest_name = max(funds, key=lambda fund: len(fund))
         width = len(largest_name)
 
         for fund in funds:
-            tk.Button(self.frame,
+            tk.Button(config_frame,
                       text=fund,
                       width=width,
                       bg='gray',
                       command=lambda fund=fund: self.plot(fund)).pack()
 
-    def configure_scroll_canvas(self):
-        self.canvas = tk.Canvas(self.root)
-        self.frame = tk.Frame(self.canvas)
-        self.scrollbar = tk.Scrollbar(self.root,
+    def create_config_frame(self):
+        self.config_canvas = tk.Canvas(self.root)
+        config_frame = tk.Frame(self.config_canvas)
+        self.scrollbar = tk.Scrollbar(config_frame,
                                       orient=tk.VERTICAL,
-                                      command=self.canvas.yview)
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+                                      command=self.config_canvas.yview)
+        self.config_canvas.configure(yscrollcommand=self.scrollbar.set)
         self.scrollbar.pack(fill=tk.Y, side=tk.RIGHT)
-        self.canvas.pack(expand=True, fill=tk.BOTH)
-        self.canvas.create_window((4, 4),
-                                  window=self.frame,
+        self.config_canvas.pack(expand=True, fill=tk.BOTH)
+        self.config_canvas.create_window((4, 4),
+                                  window=config_frame,
                                   anchor=tk.NW,
-                                  tags='self.frame')
-        self.frame.bind('<Configure>',
+                                  tags='config_frame')
+        config_frame.bind('<Configure>',
                         lambda event:
-                            self.canvas.configure(scrollregion=self.canvas.bbox(tk.ALL)))
+                            self.config_canvas.configure(scrollregion=self.config_canvas.bbox(tk.ALL)))
+        return config_frame
 
     def plot(self, fund):
         cxfeed.plot_fund(self.cxdb, self.config, fund)
