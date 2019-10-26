@@ -54,8 +54,8 @@ class CxGui(object):
                                          anchor=tk.NW,
                                          tags='config_frame')
         config_frame.bind('<Configure>',
-                        lambda event:
-                            self.config_canvas.configure(scrollregion=self.config_canvas.bbox(tk.ALL)))
+                          lambda event:
+                              self.config_canvas.configure(scrollregion=self.config_canvas.bbox(tk.ALL)))
         return config_frame
 
     def plot(self, fund):
