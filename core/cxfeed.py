@@ -117,11 +117,10 @@ def add_fund_to_plot(cxdb_path, config, fund):
         index += 1
     return figure
 
-def show_feed(cxdb_path, config_file):
+def plot_feed(cxdb_path, config_file):
     cxviz_config = CxvizConfig(config_file)
     for fund in cxviz_config.funds():
-        add_fund_to_plot(cxdb_path, cxviz_config, fund)
-    matplotlib.pyplot.show()
+        yield add_fund_to_plot(cxdb_path, cxviz_config, fund)
 
 def plot_fund(cxdb_path, config_file, fund):
     cxviz_config = CxvizConfig(config_file)

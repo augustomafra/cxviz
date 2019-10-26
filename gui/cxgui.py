@@ -15,6 +15,7 @@ class CxGui(object):
         self.root.title('cxviz')
         self.init_config_canvas()
         self.init_plot_canvas()
+        self.show_feed()
 
     def init_config_canvas(self):
         self.config_canvas = tk.Canvas(self.root)
@@ -74,6 +75,10 @@ class CxGui(object):
     def plot(self, fund):
         figure = cxfeed.plot_fund(self.cxdb, self.config, fund)
         self.plot_figure(figure)
+
+    def show_feed(self):
+        for figure in cxfeed.plot_feed(self.cxdb, self.config):
+            self.plot_figure(figure)
 
     def loop(self):
         self.root.mainloop()

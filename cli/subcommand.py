@@ -128,10 +128,10 @@ class FeedSubcmd(CreatableCxdbSubcmd):
 
     def __init__(self):
         super().__init__()
-        self.parser.add_argument('--gui-only',
-                                 action='store_true',
-                                 dest='gui_only',
-                                 help='Do not update database nor plot tracked funds')
+        self.parser.add_argument('--no-pull',
+                                 action='store_false',
+                                 dest='allow_pull',
+                                 help='Only plot funds, do not update database')
         self.set_usage_string()
         cxfeed.set_locale()
 
@@ -144,11 +144,9 @@ class FeedSubcmd(CreatableCxdbSubcmd):
         try:
             super().run()
             checker.readable_path(self.config)
-            if not self.args.gui_only:
+            if self.args.allow_pull:
                 self.update_db()
             gui = cxgui.CxGui(self.args.cxdb, self.config)
-            if not self.args.gui_only:
-                cxfeed.show_feed(self.args.cxdb, self.config)
             gui.loop()
         except cxfeed.ConfigError as e:
             print('Error when loading config file: {}'.format(self.config))
