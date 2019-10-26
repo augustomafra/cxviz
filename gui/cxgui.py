@@ -28,11 +28,16 @@ class CxGui(object):
 
         self.plot_frame = tk.Frame(self.plot_canvas)
 
-        scrollbar = tk.Scrollbar(self.plot_canvas,
+        hscrollbar = tk.Scrollbar(self.plot_canvas,
                                  orient=tk.HORIZONTAL,
                                  command=self.plot_canvas.xview)
-        self.plot_canvas.configure(xscrollcommand=scrollbar.set)
-        scrollbar.pack(fill=tk.X, side=tk.BOTTOM)
+        vscrollbar = tk.Scrollbar(self.plot_canvas,
+                                 orient=tk.VERTICAL,
+                                 command=self.plot_canvas.yview)
+        self.plot_canvas.configure(xscrollcommand=hscrollbar.set)
+        self.plot_canvas.configure(yscrollcommand=vscrollbar.set)
+        hscrollbar.pack(fill=tk.X, side=tk.BOTTOM)
+        vscrollbar.pack(fill=tk.Y, side=tk.RIGHT)
         self.plot_canvas.create_window((4, 4),
                                        window=self.plot_frame,
                                        anchor=tk.NW,
