@@ -17,26 +17,31 @@ class CxGui(object):
         self.config = config_file
         self.root = tk.Tk()
         self.root.title('cxviz')
+        self.init_config_canvas()
+        self.init_plot_canvas()
+
+    def init_config_canvas(self):
+        self.config_canvas = tk.Canvas(self.root)
         self.create_fund_buttons(sorted(cxlist.list_funds(self.cxdb)))
+
+    def init_plot_canvas(self):
+        self.plot_canvas = tk.Canvas(self.root)
+        self.plot_figure()
         self.plot_figure()
 
     def plot_figure(self):
-        self.plot_canvas = tk.Canvas(self.root)
-        frame = tk.Frame(self.plot_canvas)
+        plot_window = tk.Frame(self.plot_canvas)
         self.plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.RIGHT)
-        self.plot_canvas.create_window((700, 0),
-                                       window=frame,
-                                       anchor=tk.NE,
-                                       tags='frame')
+        plot_window.pack(side=tk.LEFT, expand=False)
         figure = matplotlib.figure.Figure(figsize=(5, 5), dpi=100)
         plot = figure.add_subplot(1, 1, 1)
         plot.plot([1,2,3,4,5,6,7,8],[5,6,1,3,8,9,3,5])
 
-        canvas = FigureCanvasTkAgg(figure, frame)
+        canvas = FigureCanvasTkAgg(figure, plot_window)
         canvas.show()
         canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        toolbar = NavigationToolbar2TkAgg(canvas, frame)
+        toolbar = NavigationToolbar2TkAgg(canvas, plot_window)
         toolbar.update()
         canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
@@ -53,7 +58,6 @@ class CxGui(object):
                       command=lambda fund=fund: self.plot(fund)).pack()
 
     def create_config_frame(self):
-        self.config_canvas = tk.Canvas(self.root)
         config_frame = tk.Frame(self.config_canvas)
         self.scrollbar = tk.Scrollbar(config_frame,
                                       orient=tk.VERTICAL,
