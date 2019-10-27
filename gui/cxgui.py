@@ -6,6 +6,7 @@ sys.path.append(os.path.join(sys.path[0], '..', 'core'))
 import cxfeed
 import cxlist
 import plotwindow
+import scrollablecanvas
 
 class CxGui(object):
     def __init__(self, cxdb_path, config_file):
@@ -19,42 +20,15 @@ class CxGui(object):
         self.show_feed()
 
     def init_config_canvas(self):
-        self.config_canvas = tk.Canvas(self.root)
-        self.config_canvas.pack(expand=False, fill=tk.Y, side=tk.LEFT)
-        self.create_fund_buttons(sorted(cxlist.list_funds(self.cxdb)))
+        config_canvas = scrollablecanvas.ScrollableCanvas(self.root,
+                                                          tk.VERTICAL)
+        config_canvas.pack(expand=False, fill=tk.Y, side=tk.LEFT)
+        config_frame = tk.Frame(config_canvas)
+        config_canvas.configure_widget(config_frame, True)
 
-    def init_plot_canvas(self):
-        self.plot_canvas = tk.Canvas(self.root)
-        self.plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.RIGHT)
-
-        self.plot_frame = tk.Frame(self.plot_canvas)
-
-        hscrollbar = tk.Scrollbar(self.plot_canvas,
-                                 orient=tk.HORIZONTAL,
-                                 command=self.plot_canvas.xview)
-        vscrollbar = tk.Scrollbar(self.plot_canvas,
-                                 orient=tk.VERTICAL,
-                                 command=self.plot_canvas.yview)
-        self.plot_canvas.configure(xscrollcommand=hscrollbar.set)
-        self.plot_canvas.configure(yscrollcommand=vscrollbar.set)
-        hscrollbar.pack(fill=tk.X, side=tk.BOTTOM)
-        vscrollbar.pack(fill=tk.Y, side=tk.RIGHT)
-        self.plot_canvas.create_window((4, 4),
-                                       window=self.plot_frame,
-                                       anchor=tk.NW,
-                                       tags='plot_frame')
-        self.plot_frame.bind('<Configure>',
-                             lambda event:
-                                 self.plot_canvas.configure(scrollregion=self.plot_canvas.bbox(tk.ALL)))
-
-    def plot_figure(self, figure):
-        plot_window = plotwindow.PlotWindow(self.plot_frame, figure)
-
-    def create_fund_buttons(self, funds):
-        config_frame = self.create_config_frame()
+        funds = sorted(cxlist.list_funds(self.cxdb))
         largest_name = max(funds, key=lambda fund: len(fund))
         width = len(largest_name)
-
         for fund in funds:
             tk.Button(config_frame,
                       text=fund,
@@ -62,21 +36,15 @@ class CxGui(object):
                       bg='gray',
                       command=lambda fund=fund: self.plot(fund)).pack()
 
-    def create_config_frame(self):
-        config_frame = tk.Frame(self.config_canvas)
-        scrollbar = tk.Scrollbar(config_frame,
-                                 orient=tk.VERTICAL,
-                                 command=self.config_canvas.yview)
-        self.config_canvas.configure(yscrollcommand=scrollbar.set)
-        scrollbar.pack(fill=tk.Y, side=tk.RIGHT)
-        self.config_canvas.create_window((4, 4),
-                                         window=config_frame,
-                                         anchor=tk.NW,
-                                         tags='config_frame')
-        config_frame.bind('<Configure>',
-                          lambda event:
-                              self.config_canvas.configure(scrollregion=self.config_canvas.bbox(tk.ALL)))
-        return config_frame
+    def init_plot_canvas(self):
+        plot_canvas = scrollablecanvas.ScrollableCanvas(self.root,
+                                                        tk.BOTH)
+        self.plot_frame = tk.Frame(plot_canvas)
+        plot_canvas.configure_widget(self.plot_frame)
+        plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.RIGHT)
+
+    def plot_figure(self, figure):
+        plotwindow.PlotWindow(self.plot_frame, figure)
 
     def plot(self, fund):
         figure = cxfeed.plot_fund(self.cxdb, self.config, fund)
