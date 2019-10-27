@@ -158,8 +158,8 @@ var pullCxdb = function(url, cxdb) {
     }
 
     page.open(url, function(status) {
-        util.checkError(status, 'Error when opening page');
         try {
+            util.checkError(status, 'Error when opening page');
             cxdbhandler.setCsvHeader(getTableHeader());
             collectDataInRange(cxdb, since, yesterday);
         } catch(_) {
