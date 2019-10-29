@@ -15,7 +15,7 @@ class CxGui(object):
 
         self.root = tk.Tk()
         self.root.title('cxviz')
-        self.root.geometry('1000x600')
+        self.root.geometry('1120x600')
 
         self.init_config_canvas()
 
@@ -25,20 +25,19 @@ class CxGui(object):
         self.init_plot_canvas(right_frame)
         self.init_log_canvas(right_frame)
 
-        self.show_feed()
-
     def init_config_canvas(self):
         config_canvas = scrollablecanvas.ScrollableCanvas(self.root,
                                                           tk.VERTICAL)
         config_canvas.pack(expand=False, fill=tk.Y, side=tk.LEFT)
-        config_frame = tk.Frame(config_canvas)
-        config_canvas.configure_widget(config_frame, True)
+        self.config_frame = tk.Frame(config_canvas)
+        config_canvas.configure_widget(self.config_frame, True)
 
+    def create_config_buttons(self):
         funds = sorted(cxlist.list_funds(self.cxdb))
         largest_name = max(funds, key=lambda fund: len(fund))
         width = len(largest_name)
         for fund in funds:
-            tk.Button(config_frame,
+            tk.Button(self.config_frame,
                       text=fund,
                       width=width,
                       bg='gray',
@@ -52,10 +51,13 @@ class CxGui(object):
         plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.TOP)
 
     def init_log_canvas(self, right_frame):
-        log = tk.Text(right_frame, height=8)
-        log.pack(expand=False, fill=tk.X)
-        log.insert(tk.END, 'test\n')
-        log.insert(tk.END, 'log')
+        self.log_widget = tk.Text(right_frame, height=8)
+        self.log_widget.pack(expand=False, fill=tk.X)
+
+    def log(self, text):
+        self.log_widget.insert(tk.END, text)
+        self.log_widget.see(tk.END)
+        self.root.update()
 
     def plot_figure(self, figure):
         plotwindow.PlotWindow(self.plot_frame, figure)
