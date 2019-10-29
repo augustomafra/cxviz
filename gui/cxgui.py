@@ -34,6 +34,8 @@ class CxGui(object):
 
     def create_config_buttons(self):
         funds = sorted(cxlist.list_funds(self.cxdb))
+        if len(funds) == 0:
+            raise Exception('Error: cxdb is empty: {}'.format(self.cxdb))
         largest_name = max(funds, key=lambda fund: len(fund))
         width = len(largest_name)
         for fund in funds:
