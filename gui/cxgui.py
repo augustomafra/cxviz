@@ -53,6 +53,7 @@ class CxGui(object):
     def init_log_canvas(self, right_frame):
         self.log_widget = tk.Text(right_frame, height=8)
         self.log_widget.pack(expand=False, fill=tk.X)
+        self.log_widget.bind('<Key>', lambda event: 'break')
 
     def log(self, text):
         self.log_widget.insert(tk.END, text)
