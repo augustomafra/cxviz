@@ -4,4 +4,4 @@ Name=cxviz feed
 Comment=cxviz feed
 Exec=/home/augusto/Documents/cxviz/cxviz feed
 Icon=/home/augusto/Documents/cxviz/icon.png
-Terminal=true
+Terminal=false
