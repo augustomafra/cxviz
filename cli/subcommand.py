@@ -135,34 +135,35 @@ class FeedSubcmd(CreatableCxdbSubcmd):
         self.set_usage_string()
         cxfeed.set_locale()
 
-    def update_db(self):
+    def update_db(self, gui):
         status = self.cxpull.pull(self.args.cxdb, False)
         if status == 1:
-            print('Warning: cxdb was not updated correctly: {}'.format(self.args.cxdb))
+            gui.logln('Warning: cxdb was not updated correctly: {}'.format(self.args.cxdb))
 
     def run(self):
+        status = 0
         try:
             super().run()
             checker.readable_path(self.config)
             gui = cxgui.CxGui(self.args.cxdb, self.config)
             self.cxpull.set_logger(gui.log)
             if self.args.allow_pull:
-                self.update_db()
+                self.update_db(gui)
             gui.create_config_buttons()
             gui.show_feed()
-            gui.loop()
         except cxfeed.ConfigError as e:
-            print('Error when loading config file: {}'.format(self.config))
-            print(e)
-            return 1
+            gui.logln('Error when loading config file: {}'.format(self.config))
+            gui.logln(e)
+            status = 1
         except cxfeed.UnknownFund as e:
-            print('Error on config file \'{}\': unknown fund: {}'.format(self.config, e))
-            return 1
+            gui.logln('Error on config file \'{}\': unknown fund: {}'.format(self.config, e))
+            status = 1
         except cxfeed.UnknownMetric as e:
-            print('Error on config file \'{}\': unknown metric: {}'.format(self.config, e))
-            return 1
+            gui.logln('Error on config file \'{}\': unknown metric: {}'.format(self.config, e))
+            status = 1
         except Exception as e:
-            print(e)
-            return 1
+            gui.logln(e)
+            status = 1
+        gui.loop()
         return 0
 

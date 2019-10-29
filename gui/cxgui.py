@@ -59,6 +59,9 @@ class CxGui(object):
         self.log_widget.see(tk.END)
         self.root.update()
 
+    def logln(self, text):
+        self.log('{}\n'.format(text))
+
     def plot_figure(self, figure):
         plotwindow.PlotWindow(self.plot_frame, figure)
 
