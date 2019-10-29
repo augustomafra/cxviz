@@ -12,11 +12,19 @@ class CxGui(object):
     def __init__(self, cxdb_path, config_file):
         self.cxdb = cxdb_path
         self.config = config_file
+
         self.root = tk.Tk()
         self.root.title('cxviz')
         self.root.geometry('1000x600')
+
         self.init_config_canvas()
-        self.init_plot_canvas()
+
+        right_frame = tk.Frame(self.root)
+        right_frame.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH)
+
+        self.init_plot_canvas(right_frame)
+        self.init_log_canvas(right_frame)
+
         self.show_feed()
 
     def init_config_canvas(self):
@@ -36,12 +44,18 @@ class CxGui(object):
                       bg='gray',
                       command=lambda fund=fund: self.plot(fund)).pack()
 
-    def init_plot_canvas(self):
-        plot_canvas = scrollablecanvas.ScrollableCanvas(self.root,
+    def init_plot_canvas(self, right_frame):
+        plot_canvas = scrollablecanvas.ScrollableCanvas(right_frame,
                                                         tk.BOTH)
         self.plot_frame = tk.Frame(plot_canvas)
         plot_canvas.configure_widget(self.plot_frame)
-        plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.RIGHT)
+        plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.TOP)
+
+    def init_log_canvas(self, right_frame):
+        log = tk.Text(right_frame, height=8)
+        log.pack(expand=False, fill=tk.X)
+        log.insert(tk.END, 'test\n')
+        log.insert(tk.END, 'log')
 
     def plot_figure(self, figure):
         plotwindow.PlotWindow(self.plot_frame, figure)
