@@ -52,8 +52,7 @@ var lock = function(cxdb) {
 var release = function(cxdb) {
     var lockFile = cxdb + '/.lock';
     if (!fs.exists(lockFile)) {
-        util.checkError('fail',
-            'Error: lock on cxdb \'' + cxdb + '\' was not found when releasing database');
+        console.log('Warning: lock on cxdb \'' + cxdb + '\' was not found when releasing database');
     }
     console.log('Unlocked cxdb directory: ' + cxdb);
     fs.remove(lockFile);
