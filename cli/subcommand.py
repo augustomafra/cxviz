@@ -144,8 +144,8 @@ class FeedSubcmd(CreatableCxdbSubcmd):
         status = 0
         try:
             super().run()
-            checker.readable_path(self.config)
             gui = cxgui.CxGui(self.args.cxdb, self.config)
+            checker.readable_path(self.config)
             self.cxpull.set_logger(gui.log)
             if self.args.allow_pull:
                 self.update_db(gui)
