@@ -26,11 +26,11 @@ class CxGui(object):
         self.init_log_canvas(right_frame)
 
     def init_config_canvas(self):
-        config_canvas = scrollablecanvas.ScrollableCanvas(self.root,
-                                                          tk.VERTICAL)
-        config_canvas.pack(expand=False, fill=tk.Y, side=tk.LEFT)
-        self.config_frame = tk.Frame(config_canvas)
-        config_canvas.configure_widget(self.config_frame, True)
+        self.config_canvas = scrollablecanvas.ScrollableCanvas(self.root,
+                                                               tk.VERTICAL)
+        self.config_canvas.pack(expand=False, fill=tk.Y, side=tk.LEFT)
+        self.config_frame = tk.Frame(self.config_canvas)
+        self.config_canvas.configure_widget(self.config_frame, True)
 
     def create_config_buttons(self):
         funds = sorted(cxlist.list_funds(self.cxdb))
@@ -38,6 +38,7 @@ class CxGui(object):
             raise Exception('Error: cxdb is empty: {}'.format(self.cxdb))
         largest_name = max(funds, key=lambda fund: len(fund))
         width = len(largest_name)
+        self.config_canvas.config(width=9 * width)
         for fund in funds:
             tk.Button(self.config_frame,
                       text=fund,
