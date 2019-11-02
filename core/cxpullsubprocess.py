@@ -8,7 +8,7 @@ class CxpullSubprocess(object):
     cxpull = os.path.join(sys.path[0], '..', 'cxpull', 'cxpull.js')
     logger = None
 
-    def set_logger(self, logger=None):
+    def set_logger(self, logger):
         self.logger = logger
 
     def get_cmdline(self, cxdb):
