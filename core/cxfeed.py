@@ -108,7 +108,7 @@ def date(data_array):
 
     return [datetime.strptime(i, date_format) for i in data_array]
 
-def add_fund_to_plot(cxdb_path, config, fund):
+def create_plot_figure(cxdb_path, config, fund):
     figure = matplotlib.pyplot.figure()
     cxdb_fund = CxdbFund(cxdb_path, fund)
     index = 1
@@ -120,9 +120,9 @@ def add_fund_to_plot(cxdb_path, config, fund):
 def plot_feed(cxdb_path, config_file):
     cxviz_config = CxvizConfig(config_file)
     for fund in cxviz_config.funds():
-        yield add_fund_to_plot(cxdb_path, cxviz_config, fund)
+        yield create_plot_figure(cxdb_path, cxviz_config, fund)
 
 def plot_fund(cxdb_path, config_file, fund):
     cxviz_config = CxvizConfig(config_file)
-    return add_fund_to_plot(cxdb_path, cxviz_config, fund)
+    return create_plot_figure(cxdb_path, cxviz_config, fund)
 

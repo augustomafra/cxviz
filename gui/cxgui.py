@@ -69,16 +69,17 @@ class CxGui(object):
     def logln(self, text):
         self.log('{}\n'.format(text))
 
-    def plot_figure(self, figure):
-        plotwindow.PlotWindow(self.plot_frame, figure)
+    def create_plot_window(self, figure):
+        plotwindow.PlotWindow(self.plot_frame,
+                              figure).pack(side=tk.LEFT, expand=False)
 
     def plot(self, fund):
         figure = cxfeed.plot_fund(self.cxdb, self.config, fund)
-        self.plot_figure(figure)
+        self.create_plot_window(figure)
 
     def show_feed(self):
         for figure in cxfeed.plot_feed(self.cxdb, self.config):
-            self.plot_figure(figure)
+            self.create_plot_window(figure)
 
     def loop(self):
         self.root.mainloop()

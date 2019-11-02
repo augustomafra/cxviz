@@ -12,7 +12,6 @@ class PlotWindow(tk.Frame):
         self.create_close_button()
         fig_canvas = self.plot_figure()
         self.create_toolbar(fig_canvas)
-        self.pack(side=tk.LEFT, expand=False)
 
     def create_close_button(self):
         tk.Button(self,
