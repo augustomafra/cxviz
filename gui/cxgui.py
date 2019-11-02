@@ -12,18 +12,16 @@ class CxGui(object):
     def __init__(self, cxdb_path, config_file):
         self.cxdb = cxdb_path
         self.config = config_file
+        self.init_root()
+        self.init_config_canvas()
+        right_frame = self.create_right_frame()
+        self.init_plot_canvas(right_frame)
+        self.init_log_canvas(right_frame)
 
+    def init_root(self):
         self.root = tk.Tk()
         self.root.title('cxviz')
         self.root.geometry('1120x600')
-
-        self.init_config_canvas()
-
-        right_frame = tk.Frame(self.root)
-        right_frame.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH)
-
-        self.init_plot_canvas(right_frame)
-        self.init_log_canvas(right_frame)
 
     def init_config_canvas(self):
         self.config_canvas = scrollablecanvas.ScrollableCanvas(self.root,
@@ -31,6 +29,23 @@ class CxGui(object):
         self.config_canvas.pack(expand=False, fill=tk.Y, side=tk.LEFT)
         self.config_frame = tk.Frame(self.config_canvas)
         self.config_canvas.configure_widget(self.config_frame, True)
+
+    def create_right_frame(self):
+        right_frame = tk.Frame(self.root)
+        right_frame.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH)
+        return right_frame
+
+    def init_plot_canvas(self, right_frame):
+        plot_canvas = scrollablecanvas.ScrollableCanvas(right_frame,
+                                                        tk.BOTH)
+        self.plot_frame = tk.Frame(plot_canvas)
+        plot_canvas.configure_widget(self.plot_frame)
+        plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.TOP)
+
+    def init_log_canvas(self, right_frame):
+        self.log_widget = tk.Text(right_frame, height=8)
+        self.log_widget.pack(expand=False, fill=tk.X)
+        self.log_widget.bind('<Key>', lambda event: 'break')
 
     def create_config_buttons(self):
         funds = sorted(cxlist.list_funds(self.cxdb))
@@ -45,18 +60,6 @@ class CxGui(object):
                       width=width,
                       bg='gray',
                       command=lambda fund=fund: self.plot(fund)).pack()
-
-    def init_plot_canvas(self, right_frame):
-        plot_canvas = scrollablecanvas.ScrollableCanvas(right_frame,
-                                                        tk.BOTH)
-        self.plot_frame = tk.Frame(plot_canvas)
-        plot_canvas.configure_widget(self.plot_frame)
-        plot_canvas.pack(expand=True, fill=tk.BOTH, side=tk.TOP)
-
-    def init_log_canvas(self, right_frame):
-        self.log_widget = tk.Text(right_frame, height=8)
-        self.log_widget.pack(expand=False, fill=tk.X)
-        self.log_widget.bind('<Key>', lambda event: 'break')
 
     def log(self, text):
         self.log_widget.insert(tk.END, text)
