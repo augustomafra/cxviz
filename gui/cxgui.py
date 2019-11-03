@@ -45,7 +45,20 @@ class CxGui(object):
     def init_log_canvas(self, right_frame):
         self.log_widget = tk.Text(right_frame, height=8)
         self.log_widget.pack(expand=False, fill=tk.X)
+
+        def clipboard_handler(event):
+            selection = None
+            try:
+                selection = self.log_widget.get(tk.SEL_FIRST, tk.SEL_LAST)
+            except tk.TclError as error:
+                return 'break'
+            if selection:
+                self.log_widget.clipboard_clear()
+                self.log_widget.clipboard_append(selection)
+            return 'break'
+
         self.log_widget.bind('<Key>', lambda event: 'break')
+        self.log_widget.bind('<Control-c>', clipboard_handler)
 
     def create_config_buttons(self):
         funds = sorted(cxlist.list_funds(self.cxdb))
