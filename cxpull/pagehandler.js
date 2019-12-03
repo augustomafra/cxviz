@@ -29,6 +29,12 @@ var nextDate = function(date, n) {
     return day;
 }
 
+var equalDates = function(date1, date2) {
+    return date1.getFullYear() === date2.getFullYear()
+        && date1.getMonth() === date2.getMonth()
+        && date1.getDate() === date2.getDate();
+}
+
 var pageBind = function(pageVar, func, arg) {
     var result = page.evaluate(function(pageVar, func, arg) {
         if (window[pageVar] === undefined) {
@@ -51,7 +57,7 @@ var getActiveTab = function() {
 var queryDate = function(date) {
     console.log('Reloading page to: ' + date);
     pageBind('dtBusca', function(date) {
-        dateArray = [date.getDate(), date.getMonth(), (1900 + date.getYear())];
+        dateArray = [date.getDate(), date.getMonth() + 1, date.getFullYear()];
         dtBusca.value = dateArray.join('/');
         mojarra.jsfcljs(document.getElementById('formPrincipal'),
                         {'btn-consultar' : 'btn-consultar'},
@@ -131,7 +137,7 @@ var collectDataInRange = function(cxdb, date, until) {
         page.onLoadFinished = function(status) {
             util.checkError(status, 'Error when reloading page');
             collectData(cxdb, date);
-            if (date.getDate() === until.getDate()) {
+            if (equalDates(date, until)) {
                 cxdbhandler.updateDateStamp(cxdb, date);
                 console.log('Updated "' + cxdb + '" datestamp to ' + date);
                 releaseAndExit(cxdb);
