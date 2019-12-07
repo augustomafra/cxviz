@@ -22,7 +22,7 @@ class CxpullSubprocess(object):
                                        stdout=subprocess.PIPE,
                                        universal_newlines=True)
         except FileNotFoundError as e:
-            print('PhantomJS was not found: {}'.format(cmd[0]))
+            self.logger('Error: PhantomJS was not found: {}\n'.format(cmd[0]))
             return 1
         self.poll_subprocess(process)
         self.flush_stdout(process)
