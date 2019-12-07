@@ -15,11 +15,15 @@ class CxpullSubprocess(object):
         return [self.engine, self.cxpull, '--cxdb', cxdb]
 
     def launch_subprocess(self, cmd):
-        if not self.logger:
-            return subprocess.run(cmd).returncode
-        process = subprocess.Popen(cmd,
-                                   stdout=subprocess.PIPE,
-                                   universal_newlines=True)
+        try:
+            if not self.logger:
+                return subprocess.run(cmd).returncode
+            process = subprocess.Popen(cmd,
+                                       stdout=subprocess.PIPE,
+                                       universal_newlines=True)
+        except FileNotFoundError as e:
+            print('PhantomJS was not found: {}'.format(cmd[0]))
+            return 1
         self.poll_subprocess(process)
         self.flush_stdout(process)
         return process.returncode
