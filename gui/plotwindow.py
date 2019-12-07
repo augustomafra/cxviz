@@ -1,6 +1,11 @@
+import sys
 import matplotlib
 matplotlib.use('TkAgg')
-from matplotlib.backends.backend_tkagg \
+if sys.platform == 'win32':
+    from matplotlib.backends.backend_tkagg \
+            import FigureCanvasTkAgg
+else:
+    from matplotlib.backends.backend_tkagg \
         import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 
 import tkinter as tk
@@ -11,7 +16,8 @@ class PlotWindow(tk.Frame):
         self.figure = figure
         self.create_close_button()
         fig_canvas = self.plot_figure()
-        self.create_toolbar(fig_canvas)
+        if not sys.platform == 'win32':
+            self.create_toolbar(fig_canvas)
 
     def create_close_button(self):
         tk.Button(self,
