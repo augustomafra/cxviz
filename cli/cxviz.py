@@ -46,6 +46,8 @@ def main():
     except RepeatedSubcmd as e:
         print('Invalid setup: Subcommand \'{}\' is repeated'.format(e))
         exit(1)
+    except subcommand.SubcmdException as e:
+        exit(1)
 
     status = 0
     try:

@@ -42,8 +42,17 @@ class CxdbSubcmd(Subcommand):
 
     def __init__(self):
         super().__init__()
-        self.cxpull = cxpullsubprocess.CxpullSubprocess(
-                        cxfeed.CxvizConfig(self.config).phantomjs())
+        try:
+            checker.readable_path(self.config)
+            self.cxpull = cxpullsubprocess.CxpullSubprocess(
+                            cxfeed.CxvizConfig(self.config).phantomjs())
+        except cxfeed.ConfigError as e:
+            print(e)
+            print('Error when loading config file: {}'.format(self.config))
+            raise SubcmdException(self.name)
+        except Exception as e:
+            print(e)
+            raise SubcmdException(self.name)
         if not hasattr(self, 'check_cxdb'):
             raise InvalidSubcmd(self.name)
         self.parser.add_argument('--cxdb',
@@ -146,16 +155,11 @@ class FeedSubcmd(CreatableCxdbSubcmd):
         try:
             super().run()
             gui = cxgui.CxGui(self.args.cxdb, self.config)
-            checker.readable_path(self.config)
             self.cxpull.set_logger(gui.log)
             if self.args.allow_pull:
                 self.update_db(gui)
             gui.create_config_buttons()
             gui.show_feed()
-        except cxfeed.ConfigError as e:
-            gui.logln('Error when loading config file: {}'.format(self.config))
-            gui.logln(e)
-            status = 1
         except cxfeed.UnknownFund as e:
             gui.logln('Error on config file \'{}\': unknown fund: {}'.format(self.config, e))
             status = 1
