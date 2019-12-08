@@ -36,6 +36,41 @@ class Subcommand(object):
     def run(self):
         self.args = self.parser.parse_args(sys.argv[2:])
 
+def open_config_file(file):
+    try:
+        return cxfeed.CxvizConfig(checker.readable_path(file))
+    except cxfeed.ConfigError as e:
+        print('Error when loading config file: {}'.format(file))
+        raise e
+    except Exception as e:
+        raise e
+
+class ConfigSubcmd(Subcommand):
+    name = 'config'
+    description = 'Configure cxviz with PhantomJS path'
+    config = os.path.join(sys.path[0], '..', '.cxviz')
+
+    def __init__(self):
+        super().__init__()
+        self.parser.add_argument('phantomjs_path',
+                                 action='store',
+                                 help='PhantomJS install dir')
+        self.set_usage_string()
+
+    def run(self):
+        try:
+            super().run()
+            cfg = open_config_file(self.config)
+            oldpath = cfg.phantomjs()
+            cfg.parser.remove_option('phantomjs', oldpath)
+            cfg.parser.set('phantomjs', self.args.phantomjs_path)
+            with open(self.config, 'w') as config_file:
+                cfg.parser.write(config_file)
+        except Exception as e:
+            print(e)
+            return 1
+        return 0
+
 class CxdbSubcmd(Subcommand):
     cxdb = os.path.join(sys.path[0], '..', 'cxdb')
     config = os.path.join(sys.path[0], '..', '.cxviz')
@@ -43,13 +78,8 @@ class CxdbSubcmd(Subcommand):
     def __init__(self):
         super().__init__()
         try:
-            checker.readable_path(self.config)
-            self.cxpull = cxpullsubprocess.CxpullSubprocess(
-                            cxfeed.CxvizConfig(self.config).phantomjs())
-        except cxfeed.ConfigError as e:
-            print(e)
-            print('Error when loading config file: {}'.format(self.config))
-            raise SubcmdException(self.name)
+            cfg = open_config_file(self.config)
+            self.cxpull = cxpullsubprocess.CxpullSubprocess(cfg.phantomjs())
         except Exception as e:
             print(e)
             raise SubcmdException(self.name)

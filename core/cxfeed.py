@@ -24,14 +24,14 @@ class CxvizConfig(object):
     def __init__(self, config_file):
         self.data = {'phantomjs': '', 'funds' : [], 'metrics' : []}
         try:
-            config = configparser.ConfigParser(delimiters=('='), allow_no_value=True)
-            self.set_case_sensitive(config)
-            config.read(config_file)
+            self.parser = configparser.ConfigParser(delimiters=('='), allow_no_value=True)
+            self.set_case_sensitive(self.parser)
+            self.parser.read(config_file)
         except Exception as e:
             raise ConfigError(e)
-        self.read_singleton_config(config, 'phantomjs')
-        self.read_config(config, 'funds')
-        self.read_config(config, 'metrics')
+        self.read_singleton_config(self.parser, 'phantomjs')
+        self.read_config(self.parser, 'funds')
+        self.read_config(self.parser, 'metrics')
 
     def set_case_sensitive(self, config):
         config.optionxform = str
