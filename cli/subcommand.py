@@ -61,8 +61,11 @@ class ConfigSubcmd(Subcommand):
         try:
             super().run()
             cfg = open_config_file(self.config)
-            oldpath = cfg.phantomjs()
-            cfg.parser.remove_option('phantomjs', oldpath)
+            if 'phantomjs' in cfg.parser:
+                oldpath = cfg.phantomjs()
+                cfg.parser.remove_option('phantomjs', oldpath)
+            else:
+                cfg.parser.add_section('phantomjs')
             cfg.parser.set('phantomjs', self.args.phantomjs_path)
             with open(self.config, 'w') as config_file:
                 cfg.parser.write(config_file)
