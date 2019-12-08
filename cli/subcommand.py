@@ -38,10 +38,12 @@ class Subcommand(object):
 
 class CxdbSubcmd(Subcommand):
     cxdb = os.path.join(sys.path[0], '..', 'cxdb')
-    cxpull = cxpullsubprocess.CxpullSubprocess()
+    config = os.path.join(sys.path[0], '..', '.cxviz')
 
     def __init__(self):
         super().__init__()
+        self.cxpull = cxpullsubprocess.CxpullSubprocess(
+                        cxfeed.CxvizConfig(self.config).phantomjs())
         if not hasattr(self, 'check_cxdb'):
             raise InvalidSubcmd(self.name)
         self.parser.add_argument('--cxdb',
@@ -124,7 +126,6 @@ class ListSubcmd(ReadableCxdbSubcmd):
 class FeedSubcmd(CreatableCxdbSubcmd):
     name = 'feed'
     description = 'Pull and show feed with data about investiment funds'
-    config = os.path.join(sys.path[0], '..', '.cxviz')
 
     def __init__(self):
         super().__init__()

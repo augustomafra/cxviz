@@ -4,9 +4,14 @@ import sys
 import subprocess
 
 class CxpullSubprocess(object):
-    engine = '/home/augusto/phantomjs-2.1.1-linux-x86_64/bin/phantomjs'
     cxpull = os.path.join(sys.path[0], '..', 'cxpull', 'cxpull.js')
     logger = None
+
+    def __init__(self, phantomjs_path):
+        if sys.platform == 'win32':
+            self.engine = os.path.join(phantomjs_path, 'bin', 'phantomjs.exe')
+        else:
+            self.engine = os.path.join(phantomjs_path, 'bin', 'phantomjs')
 
     def set_logger(self, logger):
         self.logger = logger

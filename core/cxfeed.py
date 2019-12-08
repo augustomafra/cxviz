@@ -22,13 +22,16 @@ class UnknownMetric(BaseException):
 
 class CxvizConfig(object):
     def __init__(self, config_file):
-        self.data = {'funds' : [], 'metrics' : []}
+        self.data = {'phantomjs': '', 'funds' : [], 'metrics' : []}
         try:
-            config = configparser.ConfigParser(allow_no_value=True)
+            config = configparser.ConfigParser(delimiters=('='), allow_no_value=True)
             self.set_case_sensitive(config)
             config.read(config_file)
         except Exception as e:
             raise ConfigError(e)
+        if 'phantomjs' in config:
+            for path in config['phantomjs']:
+                self.data['phantomjs'] = path
         if 'funds' in config:
             for fund in config['funds']:
                 self.data['funds'].append(fund)
@@ -38,6 +41,9 @@ class CxvizConfig(object):
 
     def set_case_sensitive(self, config):
         config.optionxform = str
+
+    def phantomjs(self):
+        return self.data['phantomjs']
 
     def funds(self):
         return self.data['funds']
