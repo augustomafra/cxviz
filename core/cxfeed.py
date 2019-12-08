@@ -29,18 +29,22 @@ class CxvizConfig(object):
             config.read(config_file)
         except Exception as e:
             raise ConfigError(e)
-        if 'phantomjs' in config:
-            for path in config['phantomjs']:
-                self.data['phantomjs'] = path
-        if 'funds' in config:
-            for fund in config['funds']:
-                self.data['funds'].append(fund)
-        if 'metrics' in config:
-            for metric in config['metrics']:
-                self.data['metrics'].append(metric)
+        self.read_singleton_config(config, 'phantomjs')
+        self.read_config(config, 'funds')
+        self.read_config(config, 'metrics')
 
     def set_case_sensitive(self, config):
         config.optionxform = str
+
+    def read_config(self, config, section):
+        if section in config:
+            for key in config[section]:
+                self.data[section].append(key)
+
+    def read_singleton_config(self, config, section):
+        if section in config:
+            for key in config[section]:
+                self.data[section] = key
 
     def phantomjs(self):
         return self.data['phantomjs']
