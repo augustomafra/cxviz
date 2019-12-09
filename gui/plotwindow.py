@@ -27,7 +27,7 @@ class PlotWindow(tk.Frame):
 
     def plot_figure(self):
         canvas = FigureCanvasTkAgg(self.figure, self)
-        canvas.show()
+        canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         return canvas
 
