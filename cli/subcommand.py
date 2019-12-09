@@ -36,9 +36,12 @@ class Subcommand(object):
     def run(self):
         self.args = self.parser.parse_args(sys.argv[2:])
 
-def open_config_file(file):
+def open_config_file(file, create_if_needed=False):
     try:
-        return cxfeed.CxvizConfig(checker.readable_path(file))
+        if create_if_needed:
+            return cxfeed.CxvizConfig(checker.maybe_file(file))
+        else:
+            return cxfeed.CxvizConfig(checker.readable_path(file))
     except cxfeed.ConfigError as e:
         print('Error when loading config file: {}'.format(file))
         raise e
@@ -60,7 +63,7 @@ class ConfigSubcmd(Subcommand):
     def run(self):
         try:
             super().run()
-            cfg = open_config_file(self.config)
+            cfg = open_config_file(self.config, True)
             if 'phantomjs' in cfg.parser:
                 oldpath = cfg.phantomjs()
                 cfg.parser.remove_option('phantomjs', oldpath)
@@ -80,12 +83,6 @@ class CxdbSubcmd(Subcommand):
 
     def __init__(self):
         super().__init__()
-        try:
-            cfg = open_config_file(self.config)
-            self.cxpull = cxpullsubprocess.CxpullSubprocess(cfg.phantomjs())
-        except Exception as e:
-            print(e)
-            raise SubcmdException(self.name)
         if not hasattr(self, 'check_cxdb'):
             raise InvalidSubcmd(self.name)
         self.parser.add_argument('--cxdb',
@@ -93,6 +90,15 @@ class CxdbSubcmd(Subcommand):
                                  type=self.check_cxdb,
                                  default=self.cxdb,
                                  help='Path to database. Default: {}'.format(self.cxdb))
+
+    def run(self):
+        super().run()
+        try:
+            cfg = open_config_file(self.config)
+            self.cxpull = cxpullsubprocess.CxpullSubprocess(cfg.phantomjs())
+        except Exception as e:
+            print(e)
+            raise SubcmdException(self.name)
 
 class ReadableCxdbSubcmd(CxdbSubcmd):
     def check_cxdb(self, cxdb):

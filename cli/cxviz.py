@@ -47,14 +47,14 @@ def main():
     except RepeatedSubcmd as e:
         print('Invalid setup: Subcommand \'{}\' is repeated'.format(e))
         exit(1)
-    except subcommand.SubcmdException as e:
-        exit(1)
 
     status = 0
     try:
         status = cxviz.launch_cli()
     except subcommand.UnknownSubcmd as errorCmd:
         print('Unrecognized command: {}'.format(errorCmd.command))
+        exit(1)
+    except subcommand.SubcmdException as e:
         exit(1)
     exit(status)
 
