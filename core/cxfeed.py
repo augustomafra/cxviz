@@ -5,6 +5,7 @@ import locale
 import matplotlib.pyplot
 import numpy
 import os
+import re
 
 import checker
 
@@ -97,26 +98,27 @@ class CxdbFund(object):
         matplotlib.pyplot.grid(True)
 
 def numeric(data_array):
-    return [numpy.nan if i == '-' else locale.atof(i) for i in data_array]
+    return [numpy.nan if num == '-' else locale.atof(num) for num in data_array]
+
+weekday = '%a'
+month = '%b'
+day = '%d'
+year = '%Y'
+hour = '%H'
+minute = '%M'
+second = '%S'
+zone = '%Z'
+offset = '%z'
+hour_format = ':'.join([hour, minute, second])
+zone_format = zone + offset
+date_format = ' '.join([weekday, month, day, year,
+                        hour_format, zone_format])
+parenthesis = re.compile(r' \(.*\)')
+def ignore_parenthesis(string):
+    return parenthesis.sub('', string)
 
 def date(data_array):
-    weekday = '%a'
-    month = '%b'
-    day = '%d'
-    year = '%Y'
-    hour = '%H'
-    minute = '%M'
-    second = '%S'
-    zone = '%Z'
-    offset = '%z'
-    ignore = '%f' # HACK Actually %f stands for microseconds
-    hour_format = ':'.join([hour, minute, second])
-    zone_format = zone + offset
-    ignore = '(-{})'.format(ignore)
-    date_format = ' '.join([weekday, month, day, year,
-                            hour_format, zone_format, ignore])
-
-    return [datetime.strptime(i, date_format) for i in data_array]
+    return [datetime.strptime(ignore_parenthesis(date_str), date_format) for date_str in data_array]
 
 def create_plot_figure(cxdb_path, config, fund):
     figure = matplotlib.pyplot.figure()
