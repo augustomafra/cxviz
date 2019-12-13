@@ -15,6 +15,9 @@ def set_locale():
 class ConfigError(BaseException):
     pass
 
+class PlotError(BaseException):
+    pass
+
 class UnknownFund(BaseException):
     pass
 
@@ -80,22 +83,16 @@ class CxdbFund(object):
                     self.data[col].append(line[i])
                     i += 1
 
-    def subplot(self, num_rows, index, metric):
-        if index > num_rows:
-            raise Exception('Invalid subplot index')
-        matplotlib.pyplot.subplot(num_rows, 1, index)
-        if index == 1:
-            matplotlib.pyplot.title(self.fund)
+    def subplot(self, metric, axis):
         date_header = list(self.data.keys())[0]
         try:
             plot_data = self.data[metric]
         except KeyError as e:
             raise UnknownMetric(metric)
-        matplotlib.pyplot.plot(date(self.data[date_header]),
-                               numeric(plot_data))
-        matplotlib.pyplot.ylabel(metric)
-        matplotlib.pyplot.xlabel(date_header)
-        matplotlib.pyplot.grid(True)
+        axis.plot(date(self.data[date_header]), numeric(plot_data))
+        axis.set_ylabel(metric)
+        axis.set_xlabel(date_header)
+        axis.grid(True)
 
 def numeric(data_array):
     return [numpy.nan if num == '-' else locale.atof(num) for num in data_array]
@@ -121,12 +118,17 @@ def date(data_array):
     return [datetime.strptime(ignore_parenthesis(date_str), date_format) for date_str in data_array]
 
 def create_plot_figure(cxdb_path, config, fund):
-    figure = matplotlib.pyplot.figure()
+    figure, axes_matrix = matplotlib.pyplot.subplots(nrows=len(config.metrics()),
+                                                     ncols=1,
+                                                     sharex=True,
+                                                     squeeze=False)
+    axes = [line[0] for line in axes_matrix]
+    if len(config.metrics()) != len(axes):
+        raise PlotError('Number of subplots and metrics do not match')
     cxdb_fund = CxdbFund(cxdb_path, fund)
-    index = 1
-    for metric in config.metrics():
-        cxdb_fund.subplot(len(config.metrics()), index, metric)
-        index += 1
+    for metric, ax in zip(config.metrics(), axes):
+        cxdb_fund.subplot(metric, ax)
+    figure.suptitle(fund)
     return figure
 
 def plot_feed(cxdb_path, config_file):
