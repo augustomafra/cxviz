@@ -17,6 +17,16 @@ class PlotWindow(tk.Frame):
         self.create_close_button()
         fig_canvas = self.plot_figure()
         self.create_toolbar(fig_canvas)
+        self.line = None
+        #def h(event):
+        #    if event.inaxes:
+        #        if self.line:
+        #            self.line.set_ydata(event.ydata)
+        #        else:
+        #            self.line = event.inaxes.axhline(color='k')
+        #        event.inaxes.figure.canvas.draw()
+        #        print('{}: {}'.format(self.figure._suptitle.get_text(), event))
+        #self.figure.canvas.mpl_connect('motion_notify_event', h)
 
     def create_close_button(self):
         tk.Button(self,
