@@ -116,6 +116,7 @@ var collectData = function(cxdb, date) {
     console.log('Query table for: ' + getDate());
     console.log('Parsing data in tab: ' + getActiveTab());
     console.log('Dumped data to csv database: ' + cxdbhandler.updateCxdb(cxdb, date, getTableData()));
+    console.log('Updated "' + cxdb + '" datestamp to ' + cxdbhandler.updateDateStamp(cxdb, date));
 }
 
 var releaseAndExit = function(cxdb, status) {
@@ -138,8 +139,6 @@ var collectDataInRange = function(cxdb, date, until) {
             util.checkError(status, 'Error when reloading page');
             collectData(cxdb, date);
             if (equalDates(date, until)) {
-                cxdbhandler.updateDateStamp(cxdb, date);
-                console.log('Updated "' + cxdb + '" datestamp to ' + date);
                 releaseAndExit(cxdb);
             } else {
                 collectDataInRange(cxdb, nextDate(date, 1), until);

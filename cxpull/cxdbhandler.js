@@ -29,6 +29,7 @@ var getFileName = function(cxdb, line) {
 var updateDateStamp = function(cxdb, date) {
     var dateStamp = cxdb + '/.datestamp';
     fs.write(dateStamp, date, 'w');
+    return date;
 }
 
 var getDateStamp = function(cxdb) {
