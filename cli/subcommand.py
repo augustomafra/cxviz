@@ -181,11 +181,14 @@ class FeedSubcmd(CreatableCxdbSubcmd):
                                  action='store_false',
                                  dest='allow_pull',
                                  help='Only plot funds, do not update database')
+        self.parser.add_argument('--debug',
+                                 action='store_true',
+                                 help='Enable verbose log')
         self.set_usage_string()
         cxfeed.set_locale()
 
     def update_db(self, gui):
-        status = self.cxpull.pull(self.args.cxdb, False)
+        status = self.cxpull.pull(self.args.cxdb, self.args.debug)
         if status == 1:
             gui.logln('Warning: cxdb was not updated correctly: {}'.format(self.args.cxdb))
 
