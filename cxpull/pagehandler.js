@@ -128,21 +128,37 @@ var releaseAndExit = function(cxdb, status) {
     }
 }
 
+var onPageReady = function(callback) {
+    var pollReadyState = function(callback) {
+        setTimeout(function(callback) {
+            var state = page.evaluate(function() { return document.readyState; });
+            if (state === 'complete') {
+                callback();
+            } else {
+                pollReadyState(callback);
+            }
+        }, 0, callback);
+    }
+    pollReadyState(callback);
+}
+
 var collectDataInRange = function(cxdb, date, until) {
-    queryDate(date);
+    onPageReady(function() { queryDate(date); });
 
     page.onLoadFinished = function(status) {
         util.checkError(status, 'Error when reloading page');
-        selectRendaFixaTab();
+        onPageReady(function() { selectRendaFixaTab(); });
 
         page.onLoadFinished = function(status) {
             util.checkError(status, 'Error when reloading page');
-            collectData(cxdb, date);
-            if (equalDates(date, until)) {
-                releaseAndExit(cxdb);
-            } else {
-                collectDataInRange(cxdb, nextDate(date, 1), until);
-            }
+            onPageReady(function() {
+                collectData(cxdb, date);
+                if (equalDates(date, until)) {
+                    releaseAndExit(cxdb);
+                } else {
+                    collectDataInRange(cxdb, nextDate(date, 1), until);
+                }
+            });
         }
     }
 }
