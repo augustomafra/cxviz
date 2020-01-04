@@ -1,5 +1,7 @@
 import sys
 import matplotlib
+import numpy
+
 matplotlib.use('TkAgg')
 if sys.platform == 'win32':
     from matplotlib.backends.backend_tkagg \
@@ -10,6 +12,36 @@ else:
 
 import tkinter as tk
 
+class Cursor:
+    def __init__(self, event):
+        self.axes = event.inaxes
+        self.dates = self.axes.lines[0].get_xdata()
+        self.values = self.axes.lines[0].get_ydata()
+
+        self.vline = self.axes.axvline(x=self.get_date(event), color='k')
+        self.hline = self.axes.axhline(y=self.get_value(event), color='k')
+        self.legend = self.axes.text(0.7, 1.05, '', transform=self.axes.transAxes)
+
+    def mouse_moved(self, event):
+        date = self.get_date(event)
+        idx = min(numpy.searchsorted(self.dates, date), len(self.dates) - 1)
+        date, value = self.dates[idx], self.values[idx]
+
+        self.vline.set_xdata(date)
+        self.hline.set_ydata(value)
+        self.legend.set_text(self.format(date, value))
+        self.axes.figure.canvas.draw()
+
+    def get_date(self, event):
+        return matplotlib.dates.num2date(event.xdata)
+
+    def get_value(self, event):
+        return event.ydata
+
+    def format(self, date, value):
+        return '{} : {}'.format(date.strftime('%Y-%m-%d'),
+                                value if not numpy.isnan(value) else '-')
+
 class PlotWindow(tk.Frame):
     def __init__(self, parent, figure):
         super().__init__(parent)
@@ -17,16 +49,18 @@ class PlotWindow(tk.Frame):
         self.create_close_button()
         fig_canvas = self.plot_figure()
         self.create_toolbar(fig_canvas)
-        self.line = None
-        #def h(event):
-        #    if event.inaxes:
-        #        if self.line:
-        #            self.line.set_ydata(event.ydata)
-        #        else:
-        #            self.line = event.inaxes.axhline(color='k')
-        #        event.inaxes.figure.canvas.draw()
-        #        print('{}: {}'.format(self.figure._suptitle.get_text(), event))
-        #self.figure.canvas.mpl_connect('motion_notify_event', h)
+        self.cursors = {}
+
+        def dispatch_cursor(event):
+            axes = event.inaxes
+            if not axes:
+                return
+            if axes not in self.cursors:
+                self.cursors[axes] = Cursor(event)
+            else:
+                self.cursors[axes].mouse_moved(event)
+
+        self.figure.canvas.mpl_connect('motion_notify_event', dispatch_cursor)
 
     def create_close_button(self):
         tk.Button(self,
