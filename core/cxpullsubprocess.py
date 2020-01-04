@@ -8,10 +8,9 @@ class CxpullSubprocess(object):
     logger = None
 
     def __init__(self, phantomjs_path):
-        if sys.platform == 'win32':
-            self.engine = os.path.join(phantomjs_path, 'bin', 'phantomjs.exe')
-        else:
-            self.engine = os.path.join(phantomjs_path, 'bin', 'phantomjs')
+        self.engine = os.path.join(phantomjs_path,
+                                   'bin',
+                                   'phantomjs{}'.format('.exe' if sys.platform == 'win32' else ''))
 
     def set_logger(self, logger):
         self.logger = logger
