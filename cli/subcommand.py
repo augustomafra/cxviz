@@ -31,6 +31,7 @@ class Subcommand(object):
         usage = self.parser.format_usage()
         usage = usage.replace('usage: ', '')
         usage = usage.replace('cxviz', 'cxviz {}'.format(self.name))
+        usage = usage.replace('.py', '')
         self.parser.usage = usage
 
     def run(self):
