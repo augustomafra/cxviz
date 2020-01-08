@@ -166,14 +166,14 @@ var collectDataInRange = function(cxdb, date, until) {
 var pullCxdb = function(url, cxdb) {
     cxdbhandler.lock(cxdb);
     var today = new Date();
-    var yesterday = nextDate(today, -1);
+    var until = nextDate(today, -5);
     var dateStamp = cxdbhandler.getDateStamp(cxdb);
-    var since = nextDate(today, -7);
+    var since = nextDate(until, -7);
     if (dateStamp !== null) {
         since = nextDate(new Date(dateStamp), 1);
     }
 
-    if (since.getDate() === today.getDate()) {
+    if (equalDates(since, nextDate(until, 1))) {
         console.log('Database "' + cxdb + '" is already up to date');
         releaseAndExit(cxdb);
     }
@@ -182,7 +182,7 @@ var pullCxdb = function(url, cxdb) {
         try {
             util.checkError(status, 'Error when opening page');
             cxdbhandler.setCsvHeader(getTableHeader());
-            collectDataInRange(cxdb, since, yesterday);
+            collectDataInRange(cxdb, since, until);
         } catch(_) {
             releaseAndExit(cxdb, 1);
         }
