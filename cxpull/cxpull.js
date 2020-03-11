@@ -16,7 +16,8 @@ phantom.onError = function(msg, trace) {
     pagehandler.releaseAndExit(cxdb, 1);
 };
 
-var url = 'http://www.fundos.caixa.gov.br/sipii/pages/public/listar-fundos-internet.jsf'
+var url = 'http://www.fundos.caixa.gov.br/sipii/pages/public/listar-fundos-internet.jsf';
+var errorReportUrl = 'http://fale-conosco.caixa.gov.br/wps/portal/faleconosco/home/formulario/reclamacoes';
 
 var args = {};
 try {
@@ -36,6 +37,7 @@ if (args.unlock) {
 
 try {
     pagehandler.setDebug(args.debug);
+    pagehandler.setErrorReportUrl(errorReportUrl);
     pagehandler.pullCxdb(url, cxdb);
 } catch(_) {
     pagehandler.releaseAndExit(cxdb, 1);

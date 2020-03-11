@@ -8,6 +8,11 @@ var setDebug = function(isdebug) {
     debug = isdebug;
 }
 
+var errorReportUrl = '';
+var setErrorReportUrl = function(url) {
+    errorReportUrl = url;
+}
+
 page.onConsoleMessage = function(message) {
     if (debug) console.log('  > ' + message);
 }
@@ -120,6 +125,9 @@ var collectData = function(cxdb, date) {
 }
 
 var releaseAndExit = function(cxdb, status) {
+    if (status !== undefined && status !== 0) {
+        console.log('If the problem persists, please file a report in ' + errorReportUrl);
+    }
     cxdbhandler.release(cxdb);
     if (status === undefined) {
         phantom.exit();
@@ -192,6 +200,7 @@ var pullCxdb = function(url, cxdb) {
 module.exports = {
     pullCxdb : pullCxdb,
     setDebug : setDebug,
+    setErrorReportUrl : setErrorReportUrl,
     releaseAndExit : releaseAndExit
 }
 
