@@ -23,7 +23,7 @@ var updateCsv = function(file, line) {
 }
 
 var getFileName = function(cxdb, line) {
-    return cxdb + '/' + line[0].replace(' (1)', '') + '.csv';
+    return cxdb + '/' + line[0].replace(new RegExp(' \\([^)]*\\)'), '') + '.csv';
 }
 
 var updateDateStamp = function(cxdb, date) {
