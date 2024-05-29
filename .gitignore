@@ -2,5 +2,7 @@ cli/__pycache__
 core/__pycache__
 gui/__pycache__
 cxdb/*
+cxdb.bak/*
 .cxviz
 *.pyc
+*.code-workspace

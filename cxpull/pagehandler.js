@@ -70,9 +70,9 @@ var queryDate = function(date) {
     }, date);
 }
 
-var selectRendaFixaTab = function() {
-    console.log('Selecting tab: RENDA FIXA');
-    pageBind('setClasseAtiva', function() { setClasseAtiva('RENDA FIXA', 1); });
+var selectTab = function(tabName) {
+    console.log('Selecting tab: ' + tabName);
+    pageBind('setClasseAtiva', function(tabName) { setClasseAtiva(tabName, 1); }, tabName);
 }
 
 var getTableHeader = function() {
@@ -94,16 +94,7 @@ var getTableHeader = function() {
 
 var getTableData = function() {
     return pageBind('formPrincipal', function() {
-        var table = formPrincipal
-                        .children[6]
-                        .children[1]
-                        .children[1]
-                        .children[0]
-                        .children[2]
-                        .children[0]
-                        .children[2]
-                        .children[2]
-                        .children;
+        var table = document.getElementsByClassName("grid_zebrada zebra grid_fundos")[0].tBodies[0].children;
         var tableData = [];
         for (var i = 0; i < table.length; ++i) {
             var line = table[i].children;
@@ -150,12 +141,12 @@ var onPageReady = function(callback) {
     pollReadyState(callback);
 }
 
-var collectDataInRange = function(cxdb, date, until) {
+var collectDataInRange = function(cxdb, tabName, date, until) {
     onPageReady(function() { queryDate(date); });
 
     page.onLoadFinished = function(status) {
         util.checkError(status, 'Error when reloading page');
-        onPageReady(function() { selectRendaFixaTab(); });
+        onPageReady(function() { selectTab(tabName); });
 
         page.onLoadFinished = function(status) {
             util.checkError(status, 'Error when reloading page');
@@ -164,7 +155,7 @@ var collectDataInRange = function(cxdb, date, until) {
                 if (equalDates(date, until)) {
                     releaseAndExit(cxdb);
                 } else {
-                    collectDataInRange(cxdb, nextDate(date, 1), until);
+                    collectDataInRange(cxdb, tabName, nextDate(date, 1), until);
                 }
             });
         }
@@ -190,7 +181,8 @@ var pullCxdb = function(url, cxdb) {
         try {
             util.checkError(status, 'Error when opening page');
             cxdbhandler.setCsvHeader(getTableHeader());
-            collectDataInRange(cxdb, since, until);
+            collectDataInRange(cxdb, 'RENDA FIXA', since, until);
+            collectDataInRange(cxdb, 'AÇÕES', since, until);
         } catch(_) {
             releaseAndExit(cxdb, 1);
         }
