@@ -10,7 +10,7 @@ def list_funds(cxdb_path):
     return [os.path.basename(csv_file).replace('.csv', '') for csv_file in fund_files]
 
 def get_csv_header(fund_file):
-    with open(fund_file, 'r') as csvfile:
+    with open(fund_file, 'r', encoding="utf-8") as csvfile:
         csvreader = csv.reader(csvfile, delimiter=';', strict=True)
         return next(csvreader)
 
