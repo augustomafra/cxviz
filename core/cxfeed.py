@@ -30,7 +30,7 @@ class CxvizConfig(object):
         try:
             self.parser = configparser.ConfigParser(delimiters=('='), allow_no_value=True)
             self.set_case_sensitive(self.parser)
-            self.parser.read(config_file)
+            self.parser.read(config_file, encoding="utf-8")
         except Exception as e:
             raise ConfigError(e)
         self.read_singleton_config(self.parser, 'phantomjs')
@@ -67,7 +67,7 @@ class CxdbFund(object):
             checker.readable_path(csv_path)
         except Exception as e:
             raise UnknownFund(fund)
-        with open(csv_path, 'r') as csvfile:
+        with open(csv_path, 'r', encoding="utf-8") as csvfile:
             csvreader = csv.reader(csvfile, delimiter=';', strict=True)
             self.parse_csv(csvreader)
 
