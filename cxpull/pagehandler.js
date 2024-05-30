@@ -141,7 +141,7 @@ var onPageReady = function(callback) {
     pollReadyState(callback);
 }
 
-var collectDataInRange = function(cxdb, tabName, date, until) {
+var collectDataInRange = function(cxdb, tabName, date, until, onFinished) {
     onPageReady(function() { queryDate(date); });
 
     page.onLoadFinished = function(status) {
@@ -153,9 +153,11 @@ var collectDataInRange = function(cxdb, tabName, date, until) {
             onPageReady(function() {
                 collectData(cxdb, date);
                 if (equalDates(date, until)) {
-                    releaseAndExit(cxdb);
+                    if (onFinished !== undefined) {
+                        return onFinished();
+                    }
                 } else {
-                    collectDataInRange(cxdb, tabName, nextDate(date, 1), until);
+                    collectDataInRange(cxdb, tabName, nextDate(date, 1), until, onFinished);
                 }
             });
         }
@@ -181,8 +183,9 @@ var pullCxdb = function(url, cxdb) {
         try {
             util.checkError(status, 'Error when opening page');
             cxdbhandler.setCsvHeader(getTableHeader());
-            collectDataInRange(cxdb, 'RENDA FIXA', since, until);
-            collectDataInRange(cxdb, 'AÇÕES', since, until);
+            collectDataInRange(cxdb, 'RENDA FIXA', since, until, function () {
+                collectDataInRange(cxdb, 'AÇÕES', since, until, function () { releaseAndExit(cxdb); });
+            });
         } catch(_) {
             releaseAndExit(cxdb, 1);
         }
