@@ -32,7 +32,22 @@ Run `cxviz feed` to automatically download updates from [CAIXA Investment Funds 
 python3 cxviz feed
 ```
 
-TODO: Set the funds and metrics to be automatically plotted in the `.cxviz` configuration file
+Add `[funds]` and `[metrics]` sections to the `.cxviz` configuration file to choose which data will be plotted. E.g.:
+
+```
+# .cxviz configuration file created by cxviz config
+[phantomjs]
+<PHANTOMJS_INSTALL_PATH>
+
+[funds]
+CAIXA FI QUALIFICADO RF CRED PRIV LP
+
+[metrics]
+Cota (R$)
+Acumulado Mês (%)
+Acumulado 12M (%)
+PL (milhões R$)
+```
 
 ## License
 See the LICENSE file for license rights and limitations (GPL-3.0).
