@@ -8,7 +8,7 @@ if sys.platform == 'win32':
             import FigureCanvasTkAgg, NavigationToolbar2Tk
 else:
     from matplotlib.backends.backend_tkagg \
-        import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+        import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 import tkinter as tk
 
