@@ -36,3 +36,4 @@ TODO: Set the funds and metrics to be automatically plotted in the `.cxviz` conf
 
 ## License
 See the LICENSE file for license rights and limitations (GPL-3.0).
+Icon by [MCruz (WMF)](https://commons.wikimedia.org/wiki/User:MCruz_(WMF)) available at https://commons.wikimedia.org/wiki/File:Growth_icon.svg under CC BY-SA 4.0 Deed Attribution-Share Alike 4.0 International license.
