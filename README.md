@@ -5,6 +5,8 @@ This project is an enhanced Data Visualization for [CAIXA Investment Funds](http
 
 It served mostly for learning Python GUI with tkinter.
 
+It uses [PhantomJS](https://phantomjs.org/) to access [CAIXA Investment Funds](https://www.fundos.caixa.gov.br/sipii/pages/public/listar-fundos-internet.jsf) webpage and download content available there.
+
 ## Installation
 - Requirements:
     - python >= 3.8.10
