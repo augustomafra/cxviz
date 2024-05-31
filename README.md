@@ -13,4 +13,4 @@ It served mostly for learning Python GUI with tkinter.
     - numpy >= 1.21.5
 
 ## License
-TODO
+See the LICENSE file for license rights and limitations (GPL-3.0).
